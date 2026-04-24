@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>医院LP研究所 | クリニック専門 集患LP制作・運用 月額10,000円</title>
+  <meta name="description" content="医院LP研究所は、歯科・整骨院・内科クリニック専門のランディングページ制作・運用サービスです。初期費用0円・月額10,000円（税込）で、新規患者の集客をサポートします。" />
+  <meta name="keywords" content="クリニック LP制作, 医院 ホームページ, 歯科 集患, 整骨院 ホームページ, 月額 LP, ランディングページ" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --green: #0D7377; --green-dark: #095c5f; --green-mid: #14a085; --green-light: #e6f5f5; --green-pale: #f0fafa; --accent: #f4a037; --text: #1a1a1a; --text-sub: #555; --border: #dde8e8; --white: #ffffff; --bg: #f7fbfb; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif; color: var(--text); background: var(--white); line-height: 1.75; overflow-x: hidden; }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    .container { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 88px 0; }
+    .section-alt { background: var(--bg); }
+    .section-header { text-align: center; margin-bottom: 56px; }
+    .section-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--green); background: var(--green-light); padding: 5px 16px; border-radius: 100px; margin-bottom: 14px; }
+    .section-title { font-size: clamp(22px, 3.5vw, 32px); font-weight: 900; line-height: 1.35; margin-bottom: 14px; }
+    .section-desc { font-size: 15px; color: var(--text-sub); max-width: 520px; margin: 0 auto; }
+    .btn { display: inline-block; padding: 16px 36px; border-radius: 100px; font-weight: 700; font-size: 15px; cursor: pointer; transition: all .22s ease; text-align: center; }
+    .btn-primary { background: var(--green); color: var(--white); box-shadow: 0 4px 18px rgba(13,115,119,.30); }
+    .btn-primary:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(13,115,119,.38); }
+    .btn-outline { background: transparent; color: var(--green); border: 2px solid var(--green); }
+    .btn-outline:hover { background: var(--green-light); transform: translateY(-2px); }
+    .btn-accent { background: var(--accent); color: var(--white); box-shadow: 0 4px 18px rgba(244,160,55,.35); }
+    .btn-accent:hover { background: #e08f20; transform: translateY(-2px); }
+    .fade-in { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .header { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(255,255,255,.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); transition: box-shadow .3s; }
+    .header.scrolled { box-shadow: 0 2px 16px rgba(0,0,0,.08); }
+    .header-inner { max-width: 1060px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 68px; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-mark { width: 36px; height: 36px; background: var(--green); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-name { font-size: 17px; font-weight: 900; color: var(--green); letter-spacing: -0.3px; }
+    .logo-sub { font-size: 10px; color: var(--text-sub); letter-spacing: 1px; }
+    .nav-list { display: flex; gap: 28px; list-style: none; }
+    .nav-list a { font-size: 13.5px; font-weight: 500; color: var(--text-sub); transition: color .2s; }
+    .nav-list a:hover { color: var(--green); }
+    .header-cta { background: var(--green); color: var(--white); padding: 10px 22px; border-radius: 100px; font-size: 13.5px; font-weight: 700; transition: all .2s; }
+    .header-cta:hover { background: var(--green-dark); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: all .3s; }
+    .hero { padding-top: 68px; min-height: 100svh; display: flex; align-items: center; background: linear-gradient(155deg, #f0fafa 0%, #e6f5f5 40%, #cceaea 100%); position: relative; overflow: hidden; }
+    .hero::before { content: ""; position: absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(13,115,119,.12) 0%, transparent 70%); right: -100px; top: -100px; border-radius: 50%; }
+    .hero::after { content: ""; position: absolute; width: 400px; height: 400px; background: radial-gradient(circle, rgba(20,160,133,.08) 0%, transparent 70%); left: -60px; bottom: -60px; border-radius: 50%; }
+    .hero-inner { max-width: 1060px; margin: 0 auto; padding: 80px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; position: relative; z-index: 1; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--white); border: 1.5px solid var(--green); color: var(--green); font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 100px; margin-bottom: 20px; }
+    .hero-title { font-family: 'Outfit', 'Noto Sans JP', sans-serif; font-size: clamp(30px, 5vw, 50px); font-weight: 900; line-height: 1.2; color: var(--text); margin-bottom: 20px; }
+    .hero-title em { font-style: normal; color: var(--green); display: block; }
+    .hero-desc { font-size: 15.5px; color: var(--text-sub); margin-bottom: 32px; line-height: 1.85; }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 36px; }
+    .hero-stats { display: flex; gap: 28px; }
+    .hero-stat .num { font-size: 26px; font-weight: 900; color: var(--green); line-height: 1; }
+    .hero-stat .num small { font-size: 14px; }
+    .hero-stat .label { font-size: 12px; color: var(--text-sub); margin-top: 3px; }
+    .hero-visual { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .hero-card { background: var(--white); border-radius: 14px; box-shadow: 0 4px 20px rgba(13,115,119,.12); overflow: hidden; }
+    .hero-card-top { height: 90px; display: flex; align-items: center; justify-content: center; font-size: 36px; }
+    .hero-card:nth-child(1) .hero-card-top { background: linear-gradient(135deg, #e8f7f7, #cce8e8); }
+    .hero-card:nth-child(2) .hero-card-top { background: linear-gradient(135deg, #edf5ff, #cce0f5); }
+    .hero-card:nth-child(3) .hero-card-top { background: linear-gradient(135deg, #fff3e8, #ffe0c0); }
+    .hero-card:nth-child(4) .hero-card-top { background: linear-gradient(135deg, #f0ffe8, #d8f0c8); }
+    .hero-card-body { padding: 12px 14px; }
+    .hero-card-name { font-size: 13px; font-weight: 700; color: var(--text); }
+    .hero-card-type { font-size: 11px; color: var(--text-sub); }
+    .pain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .pain-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 14px; padding: 24px 20px; text-align: center; transition: border-color .2s, box-shadow .2s; }
+    .pain-card:hover { border-color: var(--green); box-shadow: 0 4px 16px rgba(13,115,119,.1); }
+    .pain-icon { font-size: 32px; margin-bottom: 12px; }
+    .pain-text { font-size: 14px; color: var(--text); line-height: 1.65; }
+    .solution-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+    .solution-list { list-style: none; }
+    .solution-item { display: flex; gap: 16px; align-items: flex-start; padding: 18px 0; border-bottom: 1px solid var(--border); }
+    .solution-item:last-child { border-bottom: none; }
+    .sol-num { width: 32px; height: 32px; background: var(--green); color: var(--white); border-radius: 50%; font-size: 14px; font-weight: 900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .sol-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .sol-desc { font-size: 13.5px; color: var(--text-sub); line-height: 1.6; }
+    .solution-visual { background: linear-gradient(135deg, var(--green) 0%, var(--green-mid) 100%); border-radius: 20px; padding: 40px 36px; color: var(--white); }
+    .sol-vis-title { font-size: 22px; font-weight: 900; margin-bottom: 24px; line-height: 1.4; }
+    .sol-vis-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.2); }
+    .sol-vis-item:last-child { border-bottom: none; }
+    .sol-vis-check { font-size: 18px; color: #7effd4; }
+    .sol-vis-text { font-size: 14px; }
+    .reason-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    .reason-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 16px; padding: 28px 26px; transition: all .2s; position: relative; overflow: hidden; }
+    .reason-card::before { content: ""; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--green); }
+    .reason-card:hover { box-shadow: 0 6px 24px rgba(13,115,119,.12); transform: translateY(-2px); }
+    .reason-num { font-family: 'Outfit', sans-serif; font-size: 42px; font-weight: 900; color: var(--green-light); line-height: 1; margin-bottom: 8px; }
+    .reason-title { font-size: 17px; font-weight: 900; margin-bottom: 10px; color: var(--green); }
+    .reason-desc { font-size: 14px; color: var(--text-sub); line-height: 1.7; }
+    .sample-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .sample-card { border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--white); transition: all .22s; display: block; }
+    .sample-card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(13,115,119,.14); border-color: var(--green); }
+    .sample-thumb { height: 100px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+    .sample-card:nth-child(1) .sample-thumb { background: linear-gradient(135deg, #e8f7f7, #cce8e8); }
+    .sample-card:nth-child(2) .sample-thumb { background: linear-gradient(135deg, #edf2ff, #ccd8f5); }
+    .sample-card:nth-child(3) .sample-thumb { background: linear-gradient(135deg, #fff5e8, #ffe0c0); }
+    .sample-card:nth-child(4) .sample-thumb { background: linear-gradient(135deg, #f0ffe0, #d8f0c0); }
+    .sample-body { padding: 14px 16px; }
+    .sample-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .sample-type { font-size: 12px; color: var(--text-sub); margin-bottom: 10px; }
+    .sample-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .sample-tag { font-size: 11px; background: var(--green-light); color: var(--green); padding: 3px 9px; border-radius: 100px; font-weight: 500; }
+    .pricing-box { max-width: 700px; margin: 0 auto; background: var(--white); border: 2.5px solid var(--green); border-radius: 24px; overflow: hidden; box-shadow: 0 8px 36px rgba(13,115,119,.14); }
+    .pricing-head { background: linear-gradient(135deg, var(--green), var(--green-mid)); color: var(--white); padding: 32px 40px; text-align: center; }
+    .pricing-label { font-size: 12px; letter-spacing: 3px; opacity: .8; margin-bottom: 8px; }
+    .pricing-plan { font-size: 22px; font-weight: 900; margin-bottom: 16px; }
+    .pricing-amount { display: flex; align-items: baseline; justify-content: center; gap: 4px; }
+    .pricing-yen { font-size: 22px; font-weight: 700; opacity: .85; }
+    .pricing-num { font-family: 'Outfit', sans-serif; font-size: 64px; font-weight: 900; line-height: 1; }
+    .pricing-unit { font-size: 16px; opacity: .85; }
+    .pricing-note { font-size: 13px; opacity: .75; margin-top: 8px; }
+    .pricing-body { padding: 32px 40px; }
+    .pricing-features { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+    .pricing-feat { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; }
+    .feat-check { color: var(--green); font-size: 16px; font-weight: 900; flex-shrink: 0; margin-top: 1px; }
+    .pricing-cta { text-align: center; }
+    .pricing-sub { font-size: 13px; color: var(--text-sub); margin-top: 12px; }
+    .flow-steps { display: flex; gap: 0; position: relative; }
+    .flow-steps::before { content: ""; position: absolute; top: 32px; left: 10%; right: 10%; height: 2px; background: linear-gradient(90deg, var(--green-light), var(--green), var(--green-light)); z-index: 0; }
+    .flow-step { flex: 1; text-align: center; position: relative; z-index: 1; }
+    .flow-num { width: 64px; height: 64px; background: var(--green); color: var(--white); border-radius: 50%; font-size: 20px; font-weight: 900; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 16px; border: 4px solid var(--white); box-shadow: 0 2px 12px rgba(13,115,119,.25); }
+    .flow-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .flow-desc { font-size: 13px; color: var(--text-sub); line-height: 1.55; }
+    .flow-days { display: inline-block; margin-top: 8px; font-size: 11px; font-weight: 700; color: var(--green); background: var(--green-light); padding: 3px 10px; border-radius: 100px; }
+    .faq-list { max-width: 720px; margin: 0 auto; }
+    .faq-item { border: 1.5px solid var(--border); border-radius: 12px; margin-bottom: 14px; overflow: hidden; }
+    .faq-q { padding: 18px 24px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--white); transition: background .2s; }
+    .faq-q:hover { background: var(--green-pale); }
+    .faq-q-icon { color: var(--green); font-size: 18px; font-weight: 900; flex-shrink: 0; }
+    .faq-q-toggle { color: var(--green); font-size: 20px; font-weight: 300; flex-shrink: 0; transition: transform .3s; }
+    .faq-item.open .faq-q-toggle { transform: rotate(45deg); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height .4s ease, padding .3s; }
+    .faq-item.open .faq-a { max-height: 200px; }
+    .faq-a-inner { padding: 0 24px 20px; font-size: 14.5px; color: var(--text-sub); line-height: 1.8; border-top: 1px solid var(--border); }
+    .cta-section { background: linear-gradient(135deg, var(--green) 0%, var(--green-mid) 60%, #1abf8a 100%); padding: 88px 0; text-align: center; color: var(--white); position: relative; overflow: hidden; }
+    .cta-section::before { content: ""; position: absolute; width: 500px; height: 500px; background: rgba(255,255,255,.06); border-radius: 50%; right: -150px; top: -150px; }
+    .cta-section::after { content: ""; position: absolute; width: 300px; height: 300px; background: rgba(255,255,255,.04); border-radius: 50%; left: -80px; bottom: -80px; }
+    .cta-inner { position: relative; z-index: 1; }
+    .cta-tag { display: inline-block; background: rgba(255,255,255,.2); border: 1.5px solid rgba(255,255,255,.5); font-size: 11px; font-weight: 700; letter-spacing: 3px; padding: 5px 16px; border-radius: 100px; margin-bottom: 20px; }
+    .cta-title { font-size: clamp(24px, 4vw, 40px); font-weight: 900; margin-bottom: 14px; line-height: 1.3; }
+    .cta-desc { font-size: 15px; opacity: .88; margin-bottom: 36px; }
+    .cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+    .btn-white { background: var(--white); color: var(--green); font-weight: 700; padding: 18px 42px; border-radius: 100px; font-size: 16px; box-shadow: 0 4px 18px rgba(0,0,0,.12); transition: all .22s; }
+    .btn-white:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,.18); }
+    .cta-note { font-size: 13px; opacity: .75; }
+    .footer { background: #0a3336; color: rgba(255,255,255,.75); padding: 56px 0 28px; }
+    .footer-inner { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
+    .footer-top { display: grid; grid-template-columns: 1fr 2fr; gap: 48px; margin-bottom: 48px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,.1); }
+    .footer-logo-name { font-size: 20px; font-weight: 900; color: var(--white); margin-bottom: 8px; }
+    .footer-logo-desc { font-size: 13px; line-height: 1.7; }
+    .footer-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    .footer-link-title { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 14px; }
+    .footer-link-list { list-style: none; }
+    .footer-link-list li { margin-bottom: 8px; }
+    .footer-link-list a { font-size: 13px; transition: color .2s; }
+    .footer-link-list a:hover { color: var(--white); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+    .footer-copy { opacity: .6; }
+    @media (max-width: 768px) {
+      .section { padding: 64px 0; } .hero-inner { grid-template-columns: 1fr; gap: 40px; } .hero-visual { display: none; }
+      .pain-grid { grid-template-columns: 1fr; } .solution-wrap { grid-template-columns: 1fr; } .reason-grid { grid-template-columns: 1fr; }
+      .sample-grid { grid-template-columns: repeat(2, 1fr); } .flow-steps { flex-direction: column; gap: 28px; } .flow-steps::before { display: none; }
+      .footer-top { grid-template-columns: 1fr; gap: 32px; } .footer-links { grid-template-columns: 1fr 1fr; } .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+      .nav-list { display: none; } .hamburger { display: flex; } .pricing-features { grid-template-columns: 1fr; } .pricing-body { padding: 24px 24px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header" id="header">
+    <div class="header-inner">
+      <a href="#" class="logo"><div class="logo-mark">🏥</div><div><p class="logo-sub">クリニック専門 LP制作・運用</p><p class="logo-name">医院LP研究所</p></div></a>
+      <nav><ul class="nav-list"><li><a href="#pain">お悩み</a></li><li><a href="#reason">選ばれる理由</a></li><li><a href="#sample">実績</a></li><li><a href="#pricing">料金</a></li><li><a href="#flow">流れ</a></li><li><a href="#faq">FAQ</a></li></ul></nav>
+      <a href="#contact" class="header-cta">無料相談する</a>
+      <button class="hamburger" id="hamburger" aria-label="メニュー"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+  <section class="hero" id="hero">
+    <div class="hero-inner">
+      <div class="fade-in">
+        <p class="hero-badge">✦ クリニック集患に特化したLP専門サービス ✦</p>
+        <h1 class="hero-title">新規患者を増やす<br><em>集患LPを、月1万円で。</em></h1>
+        <p class="hero-desc">歯科・整骨院・内科クリニックの集客に特化した<br>ランディングページを企画・制作・運用まで一括サポート。<br>初期費用0円・縛りなしで今すぐ始められます。</p>
+        <div class="hero-btns"><a href="#contact" class="btn btn-primary">無料相談・資料請求</a><a href="#sample" class="btn btn-outline">制作実績を見る</a></div>
+        <div class="hero-stats">
+          <div class="hero-stat"><p class="num">¥0<small></small></p><p class="label">初期費用</p></div>
+          <div class="hero-stat"><p class="num">10,000<small>円/月</small></p><p class="label">月額（税込）</p></div>
+          <div class="hero-stat"><p class="num">2<small>週間</small></p><p class="label">最短公開</p></div>
+        </div>
+      </div>
+      <div class="hero-visual fade-in">
+        <div class="hero-card"><div class="hero-card-top">🦷</div><div class="hero-card-body"><p class="hero-card-name">スマイル歯科クリニック</p><p class="hero-card-type">歯科・審美歯科</p></div></div>
+        <div class="hero-card"><div class="hero-card-top">⚕️</div><div class="hero-card-body"><p class="hero-card-name">やすらぎ整骨院</p><p class="hero-card-type">整骨院・腰痛</p></div></div>
+        <div class="hero-card"><div class="hero-card-top">🏥</div><div class="hero-card-body"><p class="hero-card-name">内科クリニック</p><p class="hero-card-type">内科・一般診療</p></div></div>
+        <div class="hero-card"><div class="hero-card-top">🌿</div><div class="hero-card-body"><p class="hero-card-name">まるいちクリニック</p><p class="hero-card-type">地域密着型</p></div></div>
+      </div>
+    </div>
+  </section>
+  <section class="section" id="pain">
+    <div class="container">
+      <div class="section-header fade-in"><p class="section-tag">PROBLEM</p><h2 class="section-title">こんなお悩み、ありませんか？</h2><p class="section-desc">多くのクリニック院長先生から寄せられるWeb集客のお悩みです</p></div>
+      <div class="pain-grid">
+        <div class="pain-card fade-in"><p class="pain-icon">😔</p><p class="pain-text">ホームページはあるのに<strong>新規患者が思うように増えない</strong></p></div>
+        <div class="pain-card fade-in"><p class="pain-icon">💸</p><p class="pain-text">制作会社に頼むと<strong>費用が高すぎて継続できない</strong></p></div>
+        <div class="pain-card fade-in"><p class="pain-icon">🤯</p><p class="pain-text">Web集客は<strong>何から始めればいいか全くわからない</strong></p></div>
+        <div class="pain-card fade-in"><p class="pain-icon">⏱</p><p class="pain-text">更新・改善をお願いしたくても<strong>業者がすぐ動いてくれない</strong></p></div>
+        <div class="pain-card fade-in"><p class="pain-icon">📉</p><p class="pain-text">広告費をかけたが<strong>費用対効果がまったく見えない</strong></p></div>
+        <div class="pain-card fade-in"><p class="pain-icon">📱</p><p class="pain-text">スマホで見ると<strong>見づらくて患者さんが離脱している気がする</strong></p></div>
+      </div>
+    </div>
+  </section>
+  <section class="section section-alt" id="solution">
+    <div class="container">
+      <div class="solution-wrap">
+        <div class="fade-in">
+          <p class="section-tag">SOLUTION</p>
+          <h2 class="section-title" style="text-align:left;margin-bottom:32px;">医院LP研究所が<br>すべてまるっと解決します</h2>
+          <ul class="solution-list">
+            <li class="solution-item"><div class="sol-num">1</div><div><p class="sol-title">集患に特化したLP設計</p><p class="sol-desc">「予約・問い合わせ」に絞ったページ構成で、来院につながる動線を作ります</p></div></li>
+            <li class="solution-item"><div class="sol-num">2</div><div><p class="sol-title">スマホ完全対応・SEO最適化</p><p class="sol-desc">患者様が検索するキーワードで見つけてもらえるよう最適化した設計</p></div></li>
+            <li class="solution-item"><div class="sol-num">3</div><div><p class="sol-title">公開後も継続改善・更新</p><p class="sol-desc">作って終わりにせず、データを見ながらページを磨き続ける伴走サービス</p></div></li>
+            <li class="solution-item"><div class="sol-num">4</div><div><p class="sol-title">月額10,000円で全部込み</p><p class="sol-desc">初期費用0円・縛りなし。気軽に始めて、効果が出たら続ければOK</p></div></li>
+          </ul>
+        </div>
+        <div class="solution-visual fade-in">
+          <p class="sol-vis-title">月額10,000円に<br>含まれるもの</p>
+          <div class="sol-vis-item"><span class="sol-vis-check">✓</span><span class="sol-vis-text">LP企画・構成・コピーライティング</span></div>
+          <div class="sol-vis-item"><span class="sol-vis-check">✓</span><span class="sol-vis-text">デザイン・コーディング・公開</span></div>
+          <div class="sol-vis-item"><span class="sol-vis-check">✓</span><span class="sol-vis-text">スマートフォン完全対応</span></div>
+          <div class="sol-vis-item"><span class="sol-vis-check">✓</span><span class="sol-vis-text">SEO基本対策込み</span></div>
+          <div class="sol-vis-item"><span class="sol-vis-check">✓</span><span class="sol-vis-text">公開後の継続改善・更新対応</span></div>
+          <div class="sol-vis-item"><span class="sol-vis-check">✓</span><span class="sol-vis-text">メール相談し放題</span></div>
+          <div class="sol-vis-item"><span class="sol-vis-check">✓</span><span class="sol-vis-text">いつでも解約可能（縛りなし）</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section" id="reason">
+    <div class="container">
+      <div class="section-header fade-in"><p class="section-tag">WHY US</p><h2 class="section-title">選ばれる4つの理由</h2><p class="section-desc">クリニック専門だからこそできる、他社にはない強みがあります</p></div>
+      <div class="reason-grid">
+        <div class="reason-card fade-in"><p class="reason-num">01</p><p class="reason-title">クリニック専門の知見</p><p class="reason-desc">歯科・整骨院・内科・皮膚科など、医療クリニック特有の集患課題を深く理解しています。「医療広告ガイドライン」に配慮した安心・安全なLP設計が可能です。</p></div>
+        <div class="reason-card fade-in"><p class="reason-num">02</p><p class="reason-title">圧倒的なコストパフォーマンス</p><p class="reason-desc">通常のLP制作は30〜100万円以上かかります。月額10,000円のみで、制作から運用まで一括対応。新規患者が1人増えるだけで元が取れる費用設計です。</p></div>
+        <div class="reason-card fade-in"><p class="reason-num">03</p><p class="reason-title">リスクゼロで始められる</p><p class="reason-desc">初期費用0円・最低契約期間なし。いつでも解約可能なので、「まずやってみる」が気軽にできます。効果が出たら続ける、シンプルな判断基準で大丈夫です。</p></div>
+        <div class="reason-card fade-in"><p class="reason-num">04</p><p class="reason-title">公開後も伴走サポート</p><p class="reason-desc">制作して終わりではありません。公開後のデータ分析・ページ改善・内容更新まで継続対応。院長先生は診療に専念していただけます。</p></div>
+      </div>
+    </div>
+  </section>
+  <section class="section section-alt" id="sample">
+    <div class="container">
+      <div class="section-header fade-in"><p class="section-tag">WORKS</p><h2 class="section-title">制作実績サンプル</h2><p class="section-desc">各クリニックの特性に合わせた、コンバージョン重視のLPを制作しています</p></div>
+      <div class="sample-grid">
+        <a href="https://m-a-asan.github.io/clinic-lp-samples/dental/" target="_blank" rel="noopener noreferrer" class="sample-card fade-in">
+          <div class="sample-thumb">🦷</div><div class="sample-body"><p class="sample-name">スマイル歯科クリニック</p><p class="sample-type">歯科・審美歯科・インビザライン</p><div class="sample-tags"><span class="sample-tag">無痛治療</span><span class="sample-tag">予約誘導</span><span class="sample-tag">審美</span></div></div>
+        </a>
+        <a href="https://m-a-asan.github.io/clinic-lp-samples/osteopath/" target="_blank" rel="noopener noreferrer" class="sample-card fade-in">
+          <div class="sample-thumb">⚕️</div><div class="sample-body"><p class="sample-name">やすらぎ整骨院</p><p class="sample-type">整骨院・腰痛・スポーツ外傷</p><div class="sample-tags"><span class="sample-tag">腰痛</span><span class="sample-tag">交通事故</span><span class="sample-tag">骨盤</span></div></div>
+        </a>
+        <a href="https://m-a-asan.github.io/clinic-lp-samples/internal_medicine/" target="_blank" rel="noopener noreferrer" class="sample-card fade-in">
+          <div class="sample-thumb">🏥</div><div class="sample-body"><p class="sample-name">内科クリニック</p><p class="sample-type">内科・生活習慣病・健康診断</p><div class="sample-tags"><span class="sample-tag">内科</span><span class="sample-tag">健診</span><span class="sample-tag">予防</span></div></div>
+        </a>
+        <a href="https://m-a-asan.github.io/clinic-lp-samples/maruichi/" target="_blank" rel="noopener noreferrer" class="sample-card fade-in">
+          <div class="sample-thumb">🌿</div><div class="sample-body"><p class="sample-name">まるいちクリニック</p><p class="sample-type">地域密着型クリニック</p><div class="sample-tags"><span class="sample-tag">地域密着</span><span class="sample-tag">ファミリー</span></div></div>
+        </a>
+      </div>
+      <div style="text-align:center;margin-top:36px;" class="fade-in"><a href="#contact" class="btn btn-outline">サンプルページのURLを請求する</a></div>
+    </div>
+  </section>
+  <section class="section" id="pricing">
+    <div class="container">
+      <div class="section-header fade-in"><p class="section-tag">PRICING</p><h2 class="section-title">シンプルな料金プラン</h2><p class="section-desc">すべて込みで月額10,000円。追加費用はありません</p></div>
+      <div class="pricing-box fade-in">
+        <div class="pricing-head"><p class="pricing-label">STANDARD PLAN</p><p class="pricing-plan">集患LPまるっとプラン</p><div class="pricing-amount"><span class="pricing-yen">¥</span><span class="pricing-num">10,000</span><span class="pricing-unit">/ 月（税込）</span></div><p class="pricing-note">初期費用 0円　|　最低契約期間 なし　|　いつでも解約可</p></div>
+        <div class="pricing-body">
+          <div class="pricing-features">
+            <div class="pricing-feat"><span class="feat-check">✓</span><span>LP企画・構成・コピーライティング</span></div>
+            <div class="pricing-feat"><span class="feat-check">✓</span><span>デザイン・コーディング・公開</span></div>
+            <div class="pricing-feat"><span class="feat-check">✓</span><span>スマートフォン完全対応</span></div>
+            <div class="pricing-feat"><span class="feat-check">✓</span><span>SEO基本対策込み</span></div>
+            <div class="pricing-feat"><span class="feat-check">✓</span><span>公開後の継続改善・更新</span></div>
+            <div class="pricing-feat"><span class="feat-check">✓</span><span>メール相談し放題</span></div>
+          </div>
+          <div class="pricing-cta"><a href="#contact" class="btn btn-primary" style="font-size:16px;padding:18px 48px;">今すぐ無料相談する</a><p class="pricing-sub">✉ まずはメールで気軽にお問い合わせください</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section section-alt" id="flow">
+    <div class="container">
+      <div class="section-header fade-in"><p class="section-tag">FLOW</p><h2 class="section-title">ご利用の流れ</h2><p class="section-desc">お問い合わせから最短2週間でページ公開。院長先生のご負担を最小限に</p></div>
+      <div class="flow-steps fade-in">
+        <div class="flow-step"><div class="flow-num">1</div><p class="flow-title">お問い合わせ</p><p class="flow-desc">フォームまたはメールからお気軽にご連絡ください</p><span class="flow-days">当日〜翌営業日</span></div>
+        <div class="flow-step"><div class="flow-num">2</div><p class="flow-title">ヒアリング</p><p class="flow-desc">Zoom 30分で貴院の強み・ターゲット患者を確認</p><span class="flow-days">約30分</span></div>
+        <div class="flow-step"><div class="flow-num">3</div><p class="flow-title">企画・制作</p><p class="flow-desc">構成・コピー・デザインを作成。修正も対応</p><span class="flow-days">約1〜2週間</span></div>
+        <div class="flow-step"><div class="flow-num">4</div><p class="flow-title">公開・運用開始</p><p class="flow-desc">公開後もデータを見ながら継続改善します</p><span class="flow-days">以降 毎月サポート</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="section-header fade-in"><p class="section-tag">FAQ</p><h2 class="section-title">よくあるご質問</h2></div>
+      <div class="faq-list fade-in">
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span><span class="faq-q-icon">Q. </span>本当に初期費用はかかりませんか？</span><span class="faq-q-toggle">+</span></div><div class="faq-a"><div class="faq-a-inner">はい、初期費用は一切かかりません。月額10,000円（税込）のみでご利用いただけます。クレジットカードまたは銀行振込でのお支払いに対応しています。</div></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span><span class="faq-q-icon">Q. </span>すでにホームページがある場合はどうなりますか？</span><span class="faq-q-toggle">+</span></div><div class="faq-a"><div class="faq-a-inner">既存のホームページはそのままご利用いただけます。医院LP研究所のLPはホームページとは別に、「新規患者の予約・問い合わせ専用ページ」として追加する形です。既存サイトへの影響は一切ありません。</div></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span><span class="faq-q-icon">Q. </span>院長が忙しくても対応できますか？</span><span class="faq-q-toggle">+</span></div><div class="faq-a"><div class="faq-a-inner">はい。最初のヒアリング（Zoom約30分）以外は基本的にこちらで進めます。確認・修正のやり取りもメールのみで対応可能です。お忙しい先生でも無理なくご利用いただけます。</div></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span><span class="faq-q-icon">Q. </span>いつでも解約できますか？</span><span class="faq-q-toggle">+</span></div><div class="faq-a"><div class="faq-a-inner">はい、月単位の契約ですのでいつでも解約できます。最低契約期間・違約金は一切ありません。解約月の末日をもってサービスを終了いたします。</div></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span><span class="faq-q-icon">Q. </span>医療広告ガイドラインに対応していますか？</span><span class="faq-q-toggle">+</span></div><div class="faq-a"><div class="faq-a-inner">はい。医療機関のWeb広告に関する「医療広告ガイドライン（厚生労働省）」に配慮したコンテンツ設計をしています。口コミの掲載方法・体験談の取り扱いなども適切に対応いたします。</div></div></div>
+        <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span><span class="faq-q-icon">Q. </span>歯科・整骨院以外のクリニックにも対応していますか？</span><span class="faq-q-toggle">+</span></div><div class="faq-a"><div class="faq-a-inner">はい。内科・皮膚科・美容クリニック・鍼灸院など、幅広い医療クリニック様に対応しています。まずはお気軽にご相談ください。</div></div></div>
+      </div>
+    </div>
+  </section>
+  <section class="cta-section" id="contact">
+    <div class="container">
+      <div class="cta-inner fade-in">
+        <p class="cta-tag">FREE CONSULTATION</p>
+        <h2 class="cta-title">まずは無料でご相談ください</h2>
+        <p class="cta-desc">「費用対効果が気になる」「どんなページになるか見たい」<br>どんな小さなご質問でもお気軽にどうぞ。5分のご相談でも大丈夫です。</p>
+        <div class="cta-btns">
+          <a href="https://forms.gle/YVW3tN5orRPhhxhr7" target="_blank" class="btn btn-white">📋 無料相談フォームへ</a>
+          <a href="mailto:takase.infotruth@gmail.com" class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.6);">✉ メールで問い合わせる</a>
+        </div>
+        <p class="cta-note">初期費用0円・縛りなし　|　お返事は1営業日以内</p>
+      </div>
+    </div>
+  </section>
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div><p class="footer-logo-name">医院LP研究所</p><p class="footer-logo-desc">クリニック専門のLP制作・運用サービス。<br>歯科・整骨院・内科など医療クリニックの<br>Web集客を月額10,000円でサポートします。</p></div>
+        <div class="footer-links">
+          <div><p class="footer-link-title">サービス</p><ul class="footer-link-list"><li><a href="#solution">サービス内容</a></li><li><a href="#reason">選ばれる理由</a></li><li><a href="#pricing">料金プラン</a></li><li><a href="#flow">ご利用の流れ</a></li></ul></div>
+          <div><p class="footer-link-title">実績・事例</p><ul class="footer-link-list"><li><a href="#sample">歯科クリニック</a></li><li><a href="#sample">整骨院</a></li><li><a href="#sample">内科クリニック</a></li></ul></div>
+          <div><p class="footer-link-title">お問い合わせ</p><ul class="footer-link-list"><li><a href="#contact">無料相談フォーム</a></li><li><a href="mailto:takase.infotruth@gmail.com">メール</a></li><li><a href="#faq">よくある質問</a></li></ul></div>
+        </div>
+      </div>
+      <div class="footer-bottom"><p class="footer-copy">© 2026 医院LP研究所 All rights reserved.</p><p style="font-size:12px;opacity:.5;">担当：masa（高瀬）| takase.infotruth@gmail.com</p></div>
+    </div>
+  </footer>
+  <script>
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.12 });
+    fadeEls.forEach(el => observer.observe(el));
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => { header.classList.toggle('scrolled', window.scrollY > 40); });
+    function toggleFaq(el) { const item = el.parentElement; const isOpen = item.classList.contains('open'); document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open')); if (!isOpen) item.classList.add('open'); }
+    const hamburger = document.getElementById('hamburger');
+    if (hamburger) { hamburger.addEventListener('click', () => { const nav = document.querySelector('.nav-list'); if (nav) { const isOpen = nav.style.display === 'flex'; nav.style.display = isOpen ? 'none' : 'flex'; nav.style.flexDirection = 'column'; nav.style.position = 'absolute'; nav.style.top = '68px'; nav.style.left = '0'; nav.style.right = '0'; nav.style.background = '#fff'; nav.style.padding = '20px 24px'; nav.style.boxShadow = '0 8px 24px rgba(0,0,0,.1)'; } }); }
+  </script>
+</body>
+</html>
