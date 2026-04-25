@@ -1,0 +1,223 @@
+/* ===== リセット & 基本 ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Noto Sans JP', sans-serif; color: #1a2a2a; background: #fff; line-height: 1.7; overflow-x: hidden; }
+img { max-width: 100%; height: auto; display: block; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+
+/* ===== カラー変数 ===== */
+:root {
+  --primary: #0EA5A0;
+  --primary-dark: #0b857f;
+  --primary-light: #E8FAF9;
+  --secondary: #1a2a2a;
+  --accent: #A8EDEA;
+  --text: #1a2a2a;
+  --text-light: #5a6a6a;
+  --bg-gray: #F4FAFA;
+  --white: #ffffff;
+  --shadow: 0 4px 24px rgba(14,165,160,0.1);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.1);
+  --radius: 20px;
+  --radius-sm: 10px;
+}
+
+/* ===== ユーティリティ ===== */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 96px 0; }
+.section-header { text-align: center; margin-bottom: 56px; }
+.section-tag { display: inline-block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.25em; color: var(--primary); background: var(--primary-light); padding: 4px 18px; border-radius: 100px; margin-bottom: 12px; font-family: 'Outfit', sans-serif; }
+.section-title { font-family: 'Zen Kaku Gothic New', sans-serif; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 900; line-height: 1.3; }
+.section-desc { margin-top: 16px; color: var(--text-light); }
+
+/* ===== フェードイン ===== */
+.fade-in { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* ===== ボタン ===== */
+.btn { display: inline-block; padding: 16px 36px; border-radius: 100px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent; text-align: center; }
+.btn-primary { background: var(--primary); color: #fff; box-shadow: 0 6px 24px rgba(14,165,160,0.4); }
+.btn-primary:hover { background: var(--primary-dark); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(14,165,160,0.45); }
+.btn-outline { background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.6); backdrop-filter: blur(4px); }
+.btn-outline:hover { background: rgba(255,255,255,0.25); transform: translateY(-3px); }
+.btn-full { width: 100%; }
+
+/* ===== ヘッダー ===== */
+.header { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; transition: all 0.3s ease; }
+.header.scrolled { background: rgba(255,255,255,0.97); box-shadow: 0 2px 20px rgba(0,0,0,0.06); backdrop-filter: blur(10px); }
+.header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 72px; display: flex; align-items: center; gap: 32px; }
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo-icon { font-size: 2rem; }
+.logo-sub { font-size: 0.62rem; color: var(--primary); font-weight: 700; letter-spacing: 0.08em; line-height: 1; }
+.logo-name { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: #fff; line-height: 1.2; }
+.header.scrolled .logo-name { color: var(--text); }
+.nav { margin-left: auto; }
+.nav-list { display: flex; gap: 4px; }
+.nav-list a { padding: 8px 14px; border-radius: var(--radius-sm); font-size: 0.88rem; font-weight: 500; color: rgba(255,255,255,0.88); transition: all 0.2s; }
+.nav-list a:hover { background: rgba(255,255,255,0.15); color: #fff; }
+.header.scrolled .nav-list a { color: var(--text); }
+.header.scrolled .nav-list a:hover { background: var(--primary-light); color: var(--primary); }
+.header-cta { background: var(--primary); color: #fff; padding: 10px 22px; border-radius: 100px; font-size: 0.88rem; font-weight: 700; white-space: nowrap; transition: all 0.3s; box-shadow: 0 4px 16px rgba(14,165,160,0.4); }
+.header-cta:hover { background: var(--primary-dark); transform: translateY(-2px); }
+.hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+.hamburger span { display: block; width: 24px; height: 2px; background: #fff; border-radius: 2px; transition: all 0.3s; }
+.header.scrolled .hamburger span { background: var(--text); }
+
+/* ===== ヒーロー ===== */
+.hero { position: relative; min-height: 100vh; display: flex; align-items: center; overflow: hidden; }
+.hero-bg { position: absolute; inset: 0; }
+.hero-img { width: 100%; height: 100%; object-fit: cover; }
+.hero-overlay { position: absolute; inset: 0; background: linear-gradient(130deg, rgba(5,30,30,0.75) 0%, rgba(5,50,48,0.5) 50%, rgba(14,165,160,0.2) 100%); }
+.hero-content { position: relative; z-index: 1; max-width: 700px; padding: 48px 24px 48px 80px; margin-top: 72px; }
+.hero-badge { display: inline-block; color: var(--accent); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.2em; margin-bottom: 16px; font-family: 'Outfit', sans-serif; }
+.hero-title { font-family: 'Zen Kaku Gothic New', sans-serif; font-size: clamp(2.8rem, 7vw, 5rem); font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 24px; text-shadow: 0 2px 20px rgba(0,0,0,0.25); }
+.hero-desc { color: rgba(255,255,255,0.88); font-size: 1.05rem; margin-bottom: 36px; }
+.hero-btns { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 40px; }
+.hero-tags { display: flex; flex-wrap: wrap; gap: 10px; }
+.hero-tag { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(6px); color: rgba(255,255,255,0.9); padding: 6px 16px; border-radius: 100px; font-size: 0.82rem; font-weight: 500; }
+.hero-scroll-hint { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.6); font-size: 0.78rem; font-family: 'Outfit', sans-serif; letter-spacing: 0.2em; animation: bounce 2s infinite; }
+@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+
+/* ===== 実績バー ===== */
+.stats-bar { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); padding: 28px 0; }
+.stats-bar-inner { max-width: 900px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-around; align-items: center; gap: 16px; flex-wrap: wrap; }
+.stat-item { text-align: center; }
+.s-num { display: block; font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 900; color: #fff; line-height: 1; }
+.s-num small { font-size: 1rem; }
+.s-label { display: block; font-size: 0.75rem; color: rgba(255,255,255,0.8); margin-top: 4px; }
+.s-div { width: 1px; height: 40px; background: rgba(255,255,255,0.3); }
+
+/* ===== お悩み ===== */
+.worry { background: var(--bg-gray); }
+.worry-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.worry-card { background: #fff; border-radius: var(--radius); padding: 28px 20px; text-align: center; box-shadow: var(--shadow); transition: transform 0.3s, box-shadow 0.3s; border-top: 3px solid transparent; }
+.worry-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-top-color: var(--primary); }
+.worry-icon { font-size: 2.4rem; display: block; margin-bottom: 12px; }
+.worry-card p { font-size: 0.93rem; line-height: 1.65; }
+.worry-card strong { color: var(--primary); }
+
+/* ===== 当院の強み ===== */
+.reason { background: #fff; }
+.reason-list { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+.reason-card { background: linear-gradient(160deg, var(--bg-gray), #fff); border: 1.5px solid rgba(14,165,160,0.12); border-radius: var(--radius); padding: 36px 24px; text-align: center; transition: all 0.3s; }
+.reason-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+.reason-icon { font-size: 2.8rem; margin-bottom: 16px; display: block; }
+.reason-card h3 { font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 12px; line-height: 1.45; }
+.reason-card p { font-size: 0.85rem; color: var(--text-light); line-height: 1.75; }
+
+/* ===== 院長 ===== */
+.doctor { background: var(--bg-gray); }
+.doctor-inner { display: grid; grid-template-columns: 300px 1fr; gap: 64px; align-items: center; }
+.doctor-img-placeholder { background: linear-gradient(160deg, #cbf3f0, #e8fafa); border-radius: var(--radius); aspect-ratio: 3/4; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 5rem; gap: 8px; box-shadow: var(--shadow-lg); border: 3px solid rgba(14,165,160,0.2); }
+.doctor-img-placeholder p { font-size: 1rem; color: var(--text-light); }
+.doctor-name { font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 1.8rem; font-weight: 900; margin-bottom: 4px; }
+.doctor-name span { font-size: 1rem; font-weight: 400; color: var(--text-light); margin-left: 8px; }
+.doctor-cert { color: var(--primary); font-weight: 700; font-size: 0.9rem; margin-bottom: 20px; }
+.doctor-quote { background: linear-gradient(135deg, var(--primary-light), #fff); border-left: 4px solid var(--primary); padding: 16px 20px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-style: italic; font-weight: 700; color: var(--primary-dark); margin-bottom: 20px; }
+.doctor-bio { color: var(--text-light); margin-bottom: 20px; line-height: 1.85; }
+.doctor-career { padding-left: 0; }
+.doctor-career li { padding: 6px 0; color: var(--text-light); font-size: 0.88rem; border-bottom: 1px dashed #e0eded; display: flex; gap: 10px; align-items: center; }
+.doctor-career li::before { content: '✓'; color: var(--primary); font-weight: 900; }
+
+/* ===== 診療メニュー ===== */
+.treatment { background: linear-gradient(180deg, #fff, var(--bg-gray)); }
+.treatment-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-bottom: 56px; }
+.treatment-card { background: #fff; border-radius: var(--radius); padding: 30px 22px; box-shadow: var(--shadow); transition: all 0.3s; position: relative; overflow: hidden; }
+.treatment-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--primary), var(--accent)); transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
+.treatment-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+.treatment-card:hover::before { transform: scaleX(1); }
+.t-icon { font-size: 2.2rem; margin-bottom: 14px; }
+.treatment-card h3 { font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+.treatment-card p { font-size: 0.87rem; color: var(--text-light); line-height: 1.7; margin-bottom: 12px; }
+.price { color: var(--primary) !important; font-weight: 700 !important; font-size: 0.9rem !important; }
+
+/* ===== ホワイトニング特集 ===== */
+.whitening-section { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: var(--radius); padding: 56px 48px; color: #fff; }
+.whitening-inner { display: grid; grid-template-columns: 1fr 320px; gap: 48px; align-items: center; }
+.whitening-text .section-tag { background: rgba(255,255,255,0.2); color: #fff; }
+.whitening-text h3 { font-family: 'Zen Kaku Gothic New', sans-serif; font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 900; margin: 12px 0 16px; line-height: 1.3; }
+.whitening-text p { color: rgba(255,255,255,0.88); font-size: 0.95rem; line-height: 1.8; margin-bottom: 16px; }
+.whitening-points { margin-bottom: 8px; }
+.whitening-points li { padding: 6px 0; color: rgba(255,255,255,0.92); font-size: 0.92rem; }
+.before-after { display: flex; align-items: center; justify-content: center; gap: 16px; background: rgba(255,255,255,0.1); border-radius: var(--radius); padding: 32px; }
+.ba-item { text-align: center; }
+.ba-label { display: block; font-family: 'Outfit', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em; color: rgba(255,255,255,0.7); margin-bottom: 12px; }
+.ba-teeth { font-size: 2.4rem; }
+.before-teeth { filter: saturate(0.6) brightness(0.85); }
+.ba-arrow { font-size: 1.8rem; color: rgba(255,255,255,0.7); }
+
+/* ===== 患者の声 ===== */
+.voice { background: #fff; }
+.voice-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+.voice-card { background: linear-gradient(180deg, var(--bg-gray), #fff); border: 1.5px solid rgba(14,165,160,0.12); border-radius: var(--radius); padding: 32px 24px; transition: all 0.3s; }
+.voice-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+.stars { color: #f59e0b; font-size: 1.1rem; margin-bottom: 14px; letter-spacing: 2px; }
+.voice-text { color: var(--text-light); font-size: 0.92rem; line-height: 1.8; margin-bottom: 16px; font-style: italic; }
+.voice-meta { display: flex; justify-content: space-between; align-items: center; }
+.voice-author { font-weight: 700; font-size: 0.85rem; color: var(--text); }
+.voice-menu { font-size: 0.75rem; color: var(--primary); background: var(--primary-light); padding: 3px 12px; border-radius: 100px; font-weight: 700; }
+
+/* ===== FAQ ===== */
+.faq { background: var(--bg-gray); }
+.faq-list { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+.faq-item { background: #fff; border-radius: var(--radius-sm); box-shadow: 0 2px 12px rgba(0,0,0,0.04); overflow: hidden; }
+.faq-q { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; background: none; border: none; cursor: pointer; font-size: 0.98rem; font-weight: 700; font-family: 'Noto Sans JP', sans-serif; color: var(--text); text-align: left; transition: background 0.2s; }
+.faq-q::after { content: '+'; font-size: 1.4rem; color: var(--primary); font-weight: 300; transition: transform 0.3s; flex-shrink: 0; }
+.faq-q[aria-expanded="true"] { background: var(--primary-light); }
+.faq-q[aria-expanded="true"]::after { transform: rotate(45deg); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+.faq-a.open { max-height: 300px; }
+.faq-a p { padding: 0 24px 20px; color: var(--text-light); font-size: 0.92rem; line-height: 1.8; }
+
+/* ===== アクセス ===== */
+.access-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+.access-info h3 { font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 1.4rem; font-weight: 900; margin-bottom: 16px; }
+.access-info p { margin-bottom: 10px; color: var(--text-light); }
+.access-info h4 { font-size: 1rem; font-weight: 700; margin: 20px 0 10px; color: var(--text); }
+.hours-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 0.9rem; }
+.hours-table th, .hours-table td { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; text-align: center; }
+.hours-table th { background: var(--primary-light); color: var(--primary); font-weight: 700; }
+.hours-table .closed td { color: #bbb; }
+.map-placeholder { background: #e8f5f5; border-radius: var(--radius); aspect-ratio: 4/3; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-light); font-size: 2.4rem; gap: 8px; }
+.map-placeholder p { font-size: 1rem; }
+
+/* ===== お問い合わせ ===== */
+.contact-inner { max-width: 720px; margin: 0 auto; }
+.contact-tel { display: flex; align-items: center; gap: 16px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; padding: 24px 32px; border-radius: var(--radius); margin-bottom: 28px; box-shadow: var(--shadow); transition: all 0.3s; }
+.contact-tel:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.tel-icon { font-size: 2.4rem; }
+.tel-label { font-size: 0.82rem; opacity: 0.85; }
+.tel-num { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 900; line-height: 1.1; }
+.tel-hours { font-size: 0.78rem; opacity: 0.75; }
+.contact-divider { text-align: center; margin: 10px 0 20px; color: var(--text-light); font-size: 0.88rem; }
+.contact-form { background: #fff; padding: 36px; border-radius: var(--radius); box-shadow: var(--shadow); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 0.88rem; font-weight: 700; margin-bottom: 8px; }
+.required { background: var(--primary); color: #fff; font-size: 0.7rem; padding: 2px 8px; border-radius: 100px; margin-left: 6px; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 16px; border: 1.5px solid #e0ecec; border-radius: var(--radius-sm); font-family: 'Noto Sans JP', sans-serif; font-size: 0.95rem; transition: border-color 0.2s, box-shadow 0.2s; outline: none; background: #fafefe; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(14,165,160,0.12); background: #fff; }
+
+/* ===== フッター ===== */
+.footer { background: #061a1a; color: rgba(255,255,255,0.7); padding: 48px 0 24px; }
+.footer-inner { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; margin-bottom: 32px; }
+.footer-brand p { font-size: 0.88rem; line-height: 1.8; }
+.footer-nav { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.footer-nav a { font-size: 0.88rem; transition: color 0.2s; }
+.footer-nav a:hover { color: var(--primary); }
+.footer-copy { text-align: center; font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; }
+
+/* ===== フローティングCTA ===== */
+.floating-cta { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 10px; z-index: 999; opacity: 0; pointer-events: none; transform: translateY(16px); transition: all 0.4s ease; }
+.floating-cta.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.float-btn { display: block; padding: 14px 22px; border-radius: 100px; font-weight: 700; font-size: 0.9rem; text-align: center; box-shadow: 0 6px 20px rgba(0,0,0,0.15); transition: all 0.3s; white-space: nowrap; }
+.float-tel { background: #fff; color: var(--text); border: 1.5px solid #d0eaea; }
+.float-tel:hover { background: #f0fafa; transform: scale(1.04); }
+.float-reserve { background: var(--primary); color: #fff; }
+.float-reserve:hover { background: var(--primary-dark); transform: scale(1.04); }
+
+/* ===== レスポンシブ ===== */
+@media (max-width: 1024px) { .reason-list { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 960px) { .worry-grid { grid-template-columns: repeat(2,1fr); } .treatment-grid { grid-template-columns: repeat(2,1fr); } .voice-grid { grid-template-columns: repeat(2,1fr); } .doctor-inner { grid-template-columns: 1fr; } .doctor-img-placeholder { max-width: 280px; margin: 0 auto; aspect-ratio: 1/1; } .access-inner { grid-template-columns: 1fr; } .whitening-inner { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .section { padding: 64px 0; } .hero-content { padding: 48px 20px 48px 24px; } .hero-btns { flex-direction: column; } .reason-list { grid-template-columns: 1fr 1fr; } .treatment-grid, .voice-grid { grid-template-columns: 1fr; } .whitening-section { padding: 36px 24px; } .stats-bar-inner { gap: 24px; } .s-div { display: none; } .form-row { grid-template-columns: 1fr; } .contact-form { padding: 24px; } .nav { display: none; } .nav.open { display: block; position: fixed; top: 72px; left: 0; right: 0; background: rgba(255,255,255,0.98); padding: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); } .nav.open .nav-list { flex-direction: column; } .nav.open .nav-list a { color: var(--text); padding: 14px 20px; display: block; } .header-cta { display: none; } .hamburger { display: flex; } .footer-inner { flex-direction: column; } .floating-cta { flex-direction: row; bottom: 16px; right: 12px; left: 12px; justify-content: center; } }
