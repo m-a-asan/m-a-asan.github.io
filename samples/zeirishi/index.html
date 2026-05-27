@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>サンプル税理士事務所 | 医院・クリニック専門の税務顧問</title>
+<meta name="description" content="医院・クリニック専門の税理士事務所サンプルLP。開業支援、医療法人化、自費診療の収益最適化、医院経営の財務戦略をご支援します。" />
+<meta name="robots" content="noindex,nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --brand:#1f4e79;
+    --brand-dark:#163b5d;
+    --accent:#c8a85b;
+    --bg:#f7f6f2;
+    --text:#222;
+    --muted:#666;
+    --line:#e3e0d8;
+    --white:#fff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Noto Sans JP",sans-serif;color:var(--text);background:var(--bg);line-height:1.7;font-size:16px}
+  img{max-width:100%;display:block}
+  a{color:inherit;text-decoration:none}
+  .container{max-width:1100px;margin:0 auto;padding:0 24px}
+  .sample-banner{background:#fff3cd;border-bottom:2px solid #e0c878;color:#664d03;text-align:center;padding:8px 16px;font-size:13px;font-weight:500;letter-spacing:.02em}
+  .header{position:sticky;top:0;z-index:50;background:var(--white);box-shadow:0 1px 8px rgba(0,0,0,.06)}
+  .header-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;max-width:1200px;margin:0 auto}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo-mark{width:42px;height:42px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;letter-spacing:.05em}
+  .logo-text .sub{font-size:11px;color:var(--muted);letter-spacing:.1em}
+  .logo-text .name{font-size:18px;font-weight:900;color:var(--brand)}
+  .nav{display:flex;gap:24px;font-size:14px;font-weight:500}
+  .nav a:hover{color:var(--brand)}
+  .header-cta{background:var(--brand);color:#fff;padding:10px 20px;border-radius:4px;font-size:13px;font-weight:700;transition:.2s}
+  .header-cta:hover{background:var(--brand-dark)}
+
+  .hero{background:linear-gradient(135deg,rgba(22,59,93,.88) 0%,rgba(31,78,121,.78) 50%,rgba(42,99,148,.70) 100%),url('images/hero.jpg') center/cover no-repeat;color:#fff;padding:96px 24px 112px;text-align:center;position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(200,168,91,.18),transparent 40%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.06),transparent 50%);pointer-events:none}
+  .hero h1{font-size:clamp(28px,4vw,44px);font-weight:900;line-height:1.4;margin-bottom:24px;letter-spacing:.02em}
+  .hero .lead{font-size:clamp(15px,1.6vw,18px);max-width:720px;margin:0 auto 32px;opacity:.95}
+  .hero-badge{display:inline-block;background:rgba(200,168,91,.2);border:1px solid var(--accent);color:var(--accent);padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:24px;letter-spacing:.05em}
+  .hero-cta{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#222;padding:16px 36px;border-radius:6px;font-weight:900;font-size:16px;box-shadow:0 4px 14px rgba(200,168,91,.4);transition:.2s}
+  .hero-cta:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(200,168,91,.5)}
+
+  section{padding:80px 0}
+  .section-head{text-align:center;margin-bottom:56px}
+  .section-head .en{font-size:13px;color:var(--accent);letter-spacing:.2em;font-weight:700;display:block;margin-bottom:8px}
+  .section-head h2{font-size:clamp(24px,3vw,32px);font-weight:900;color:var(--brand);position:relative;display:inline-block;padding-bottom:16px}
+  .section-head h2::after{content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:48px;height:3px;background:var(--accent)}
+
+  .strengths{background:var(--white)}
+  .strength-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+  .strength-card{padding:32px 24px;border:1px solid var(--line);border-radius:8px;background:var(--bg);text-align:center;transition:.2s}
+  .strength-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+  .strength-card .num{display:inline-block;font-size:32px;font-weight:900;color:var(--accent);margin-bottom:12px;font-family:Georgia,serif}
+  .strength-card h3{font-size:18px;font-weight:900;color:var(--brand);margin-bottom:12px}
+  .strength-card p{font-size:14px;color:var(--muted)}
+
+  .services{background:var(--bg)}
+  .service-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+  .service-item{background:var(--white);padding:28px;border-left:4px solid var(--brand);border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  .service-item h3{font-size:17px;font-weight:900;color:var(--brand);margin-bottom:12px}
+  .service-item p{font-size:14px;color:var(--muted)}
+
+  .pricing{background:var(--white)}
+  .price-table{max-width:780px;margin:0 auto;border-collapse:collapse;background:var(--white);box-shadow:0 2px 12px rgba(0,0,0,.06);border-radius:8px;overflow:hidden}
+  .price-table th,.price-table td{padding:18px 20px;text-align:left;border-bottom:1px solid var(--line);font-size:14px}
+  .price-table th{background:var(--brand);color:#fff;font-weight:700}
+  .price-table td.price{font-weight:900;color:var(--brand);font-size:16px;text-align:right;white-space:nowrap}
+  .price-note{max-width:780px;margin:16px auto 0;font-size:12px;color:var(--muted);text-align:center}
+
+  .profile{background:var(--bg)}
+  .profile-card{max-width:780px;margin:0 auto;background:var(--white);padding:40px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.06);display:flex;gap:32px;align-items:center;flex-wrap:wrap}
+  .profile-photo{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;font-size:48px;font-weight:900;flex-shrink:0}
+  .profile-body{flex:1;min-width:240px}
+  .profile-body .role{font-size:12px;color:var(--muted);letter-spacing:.1em}
+  .profile-body h3{font-size:22px;font-weight:900;color:var(--brand);margin:4px 0 16px}
+  .profile-body p{font-size:14px;color:var(--text);line-height:1.8}
+
+  .faq{background:var(--white)}
+  .faq-list{max-width:780px;margin:0 auto}
+  .faq-item{border:1px solid var(--line);border-radius:6px;margin-bottom:12px;background:var(--bg);overflow:hidden}
+  .faq-q{padding:18px 24px;font-weight:700;color:var(--brand);position:relative;padding-left:60px}
+  .faq-q::before{content:"Q";position:absolute;left:24px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .faq-a{padding:0 24px 18px 60px;font-size:14px;color:var(--muted);position:relative}
+  .faq-a::before{content:"A";position:absolute;left:24px;top:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+
+  .access{background:var(--bg)}
+  .access-grid{max-width:900px;margin:0 auto;background:var(--white);padding:32px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+  .access-map{position:relative;border-radius:6px;overflow:hidden}
+  .access-map img{width:100%;height:280px;object-fit:cover;display:block}
+  .access-map .map-caption{position:absolute;bottom:8px;left:8px;background:rgba(255,255,255,.92);color:var(--brand);font-size:11px;font-weight:700;padding:4px 10px;border-radius:3px;letter-spacing:.05em}
+  .access-info dl{display:grid;grid-template-columns:100px 1fr;gap:12px 16px;font-size:14px}
+  .access-info dt{font-weight:700;color:var(--brand)}
+  .access-info dd{color:var(--text)}
+
+  .contact{background:linear-gradient(135deg,#163b5d,#1f4e79);color:#fff;text-align:center}
+  .contact .section-head h2{color:#fff}
+  .contact .section-head .en{color:var(--accent)}
+  .contact-lead{max-width:640px;margin:0 auto 40px;font-size:15px;opacity:.95}
+  .contact-cta{display:inline-flex;align-items:center;gap:12px;background:var(--accent);color:#222;padding:20px 48px;border-radius:6px;font-weight:900;font-size:17px;box-shadow:0 6px 20px rgba(200,168,91,.4);transition:.2s}
+  .contact-cta:hover{transform:translateY(-2px)}
+  .contact-info{margin-top:32px;font-size:14px;opacity:.9}
+
+  footer{background:#0d1f33;color:#a8b8c8;padding:32px 24px;text-align:center;font-size:13px}
+  footer .footer-name{color:#fff;font-weight:700;font-size:15px;margin-bottom:4px}
+
+  @media (max-width:768px){
+    .nav{display:none}
+    section{padding:56px 0}
+    .hero{padding:60px 24px 72px}
+    .profile-card{padding:24px;text-align:center;justify-content:center}
+    .access-grid{grid-template-columns:1fr;gap:20px}
+    .access-info dl{grid-template-columns:90px 1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="sample-banner">
+  ※本ページは「医院LP研究所」が提示する税理士事務所向けLPサンプルです。実在の事務所ではありません。
+</div>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-mark">税</div>
+      <div class="logo-text">
+        <div class="sub">医院・クリニック専門</div>
+        <div class="name">サンプル税理士事務所</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="#strengths">強み</a>
+      <a href="#services">サービス</a>
+      <a href="#pricing">料金</a>
+      <a href="#profile">代表</a>
+      <a href="#faq">FAQ</a>
+      <a href="#access">アクセス</a>
+    </nav>
+    <a href="#contact" class="header-cta">無料相談</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <span class="hero-badge">医院・クリニック専門</span>
+    <h1>院長先生が「診療に専念できる」<br>財務・税務パートナー</h1>
+    <p class="lead">
+      開業準備から医療法人化、自費診療の収益最適化、補助金活用まで。<br>
+      医療業界の制度・補助金・節税スキームに精通した税理士が、院長先生の財務戦略をサポートします。
+    </p>
+    <a href="#contact" class="hero-cta">初回相談 無料 →</a>
+  </div>
+</section>
+
+<section class="strengths" id="strengths">
+  <div class="container">
+    <div class="section-head">
+      <span class="en">OUR STRENGTHS</span>
+      <h2>選ばれる4つの理由</h2>
+    </div>
+    <div class="strength-grid">
+      <div class="strength-card">
+        <div class="num">01</div>
+        <h3>医院特化の実績</h3>
+        <p>整骨院・歯科・内科・自費診療系クリニックの顧問実績多数。業界特有の処理を熟知。</p>
+      </div>
+      <div class="strength-card">
+        <div class="num">02</div>
+        <h3>開業から法人化まで</h3>
+        <p>開業計画書作成、融資サポート、医療法人化までワンストップ。タイミング判断も的確に。</p>
+      </div>
+      <div class="strength-card">
+        <div class="num">03</div>
+        <h3>補助金・助成金対応</h3>
+        <p>IT導入補助金、事業再構築補助金、医療系の各種助成金まで、申請を伴走サポート。</p>
+      </div>
+      <div class="strength-card">
+        <div class="num">04</div>
+        <h3>クラウド会計対応</h3>
+        <p>freee、マネーフォワード、弥生クラウド対応。レセコンとの連携も支援します。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="services" id="services">
+  <div class="container">
+    <div class="section-head">
+      <span class="en">SERVICES</span>
+      <h2>提供サービス</h2>
+    </div>
+    <div class="service-list">
+      <div class="service-item">
+        <h3>月次顧問・記帳代行</h3>
+        <p>毎月の財務状況把握と税務相談。月次試算表で経営判断をサポート。</p>
+      </div>
+      <div class="service-item">
+        <h3>決算・確定申告</h3>
+        <p>年次決算、所得税・法人税申告。節税スキームの提案も含めて対応。</p>
+      </div>
+      <div class="service-item">
+        <h3>開業支援</h3>
+        <p>事業計画書、金融機関融資、保健所手続き、開業届出までトータルサポート。</p>
+      </div>
+      <div class="service-item">
+        <h3>医療法人化支援</h3>
+        <p>個人クリニックから医療法人への移行判断と手続き、認可申請を支援。</p>
+      </div>
+      <div class="service-item">
+        <h3>節税・資産形成相談</h3>
+        <p>院長個人の所得税最適化、退職金準備、相続対策まで個別にプランニング。</p>
+      </div>
+      <div class="service-item">
+        <h3>補助金・助成金申請</h3>
+        <p>医療機器導入、IT化、人材確保等の各種補助金の情報提供と申請伴走。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-head">
+      <span class="en">PRICING</span>
+      <h2>料金プラン（参考）</h2>
+    </div>
+    <table class="price-table">
+      <tr><th>プラン</th><th>対象</th><th style="text-align:right">月額（税抜）</th></tr>
+      <tr><td>スタートプラン</td><td>個人開業・年商3,000万円未満</td><td class="price">¥30,000〜</td></tr>
+      <tr><td>スタンダードプラン</td><td>個人開業・年商3,000万〜1億円</td><td class="price">¥50,000〜</td></tr>
+      <tr><td>法人プラン</td><td>医療法人・年商1億円超</td><td class="price">¥80,000〜</td></tr>
+      <tr><td>決算料</td><td>年1回</td><td class="price">月額×4〜6ヶ月相当</td></tr>
+    </table>
+    <p class="price-note">※料金は規模・取引量によりお見積もりいたします。初回相談・お見積もりは無料です。</p>
+  </div>
+</section>
+
+<section class="profile" id="profile">
+  <div class="container">
+    <div class="section-head">
+      <span class="en">REPRESENTATIVE</span>
+      <h2>代表プロフィール</h2>
+    </div>
+    <div class="profile-card">
+      <div class="profile-photo">税</div>
+      <div class="profile-body">
+        <div class="role">代表税理士</div>
+        <h3>サンプル 太郎</h3>
+        <p>
+          税理士登録番号 第000000号。大手会計事務所にて医療法人担当を経験後、医院・クリニック専門の税理士事務所を開業。
+          整骨院・歯科・内科・美容クリニックなど多様な医院の財務をサポート。
+          「数字に強い院長が、診療に強い院長になる」を信念に、わかりやすい説明と先回りの提案を心がけています。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="section-head">
+      <span class="en">FAQ</span>
+      <h2>よくあるご質問</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q">他事務所からの乗り換えは可能ですか？</div>
+        <div class="faq-a">はい、可能です。引継ぎ作業も丁寧に対応いたします。決算期のタイミングに合わせるとスムーズです。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">対応エリアはどこまでですか？</div>
+        <div class="faq-a">関東圏を中心に対応しております。クラウド会計を活用し、遠方の医院様も対応可能です。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">開業前の段階から相談できますか？</div>
+        <div class="faq-a">はい、開業準備段階からのご相談を歓迎いたします。事業計画・融資・物件選定の財務観点でアドバイスいたします。</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">レセコンとの連携はできますか？</div>
+        <div class="faq-a">主要レセコン（メディコム・ダイナミクス等）からのデータ取り込みに対応しています。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="access" id="access">
+  <div class="container">
+    <div class="section-head">
+      <span class="en">ACCESS</span>
+      <h2>アクセス</h2>
+    </div>
+    <div class="access-grid">
+      <div class="access-map">
+        <img src="images/map.jpg" alt="周辺エリアのイメージ" loading="lazy" />
+        <span class="map-caption">MAP IMAGE</span>
+      </div>
+      <div class="access-info">
+        <dl>
+          <dt>事務所名</dt><dd>サンプル税理士事務所</dd>
+          <dt>所在地</dt><dd>東京都〇〇区〇〇 サンプルビル0F</dd>
+          <dt>最寄駅</dt><dd>〇〇線 〇〇駅 徒歩0分</dd>
+          <dt>営業時間</dt><dd>平日 9:00〜18:00（土日祝休）</dd>
+          <dt>電話</dt><dd>00-0000-0000</dd>
+          <dt>メール</dt><dd>sample@example.com</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="section-head">
+      <span class="en">CONTACT</span>
+      <h2>初回相談 無料</h2>
+    </div>
+    <p class="contact-lead">
+      まずはお気軽にお問い合わせください。<br>
+      事務所の状況・ご要望をお伺いした上で、最適なプランをご提案いたします。
+    </p>
+    <a href="mailto:sample@example.com" class="contact-cta">無料相談を申し込む →</a>
+    <div class="contact-info">
+      お電話でも承ります：00-0000-0000（平日 9:00〜18:00）
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-name">サンプル税理士事務所</div>
+  <div>※本ページは「医院LP研究所」が制作する税理士事務所向けLPの参考サンプルです。</div>
+  <div style="margin-top:12px;font-size:11px">© Sample Tax Office (Demo)</div>
+</footer>
+
+</body>
+</html>
