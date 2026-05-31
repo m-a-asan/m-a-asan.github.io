@@ -9,3 +9,23 @@ CLAUDE.md
 note記事/
 営業ツール/
 自社LP/
+
+# 機密情報（誤コミット防止）。note記事/配下は上で除外済みだが、ファイル移動に備え多層防御で明示
+config.json
+**/config.json
+chrome_profile/
+**/chrome_profile/
+debug_screenshot.png
+
+# 業務・機密ファイル（公開リポジトリ m-a-asan.github.io には絶対に含めない）
+# ※ 公開すべきは LP の html/css/js/画像のみ。業務データ・スクリプト・戦略文書は全て除外。
+*.csv
+*.xlsx
+*.py
+*.md
+tmp_*
+__pycache__/
+.obsidian/
+Obsidian Vault/
+サンプルLP/
+営業ツール/
