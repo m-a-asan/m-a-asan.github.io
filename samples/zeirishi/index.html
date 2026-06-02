@@ -1,341 +1,323 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>サンプル税理士事務所 | 医院・クリニック専門の税務顧問</title>
-<meta name="description" content="医院・クリニック専門の税理士事務所サンプルLP。開業支援、医療法人化、自費診療の収益最適化、医院経営の財務戦略をご支援します。" />
-<meta name="robots" content="noindex,nofollow" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
-<style>
-  :root{
-    --brand:#1f4e79;
-    --brand-dark:#163b5d;
-    --accent:#c8a85b;
-    --bg:#f7f6f2;
-    --text:#222;
-    --muted:#666;
-    --line:#e3e0d8;
-    --white:#fff;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{font-family:"Noto Sans JP",sans-serif;color:var(--text);background:var(--bg);line-height:1.7;font-size:16px}
-  img{max-width:100%;display:block}
-  a{color:inherit;text-decoration:none}
-  .container{max-width:1100px;margin:0 auto;padding:0 24px}
-  .sample-banner{background:#fff3cd;border-bottom:2px solid #e0c878;color:#664d03;text-align:center;padding:8px 16px;font-size:13px;font-weight:500;letter-spacing:.02em}
-  .header{position:sticky;top:0;z-index:50;background:var(--white);box-shadow:0 1px 8px rgba(0,0,0,.06)}
-  .header-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;max-width:1200px;margin:0 auto}
-  .logo{display:flex;align-items:center;gap:12px}
-  .logo-mark{width:42px;height:42px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;letter-spacing:.05em}
-  .logo-text .sub{font-size:11px;color:var(--muted);letter-spacing:.1em}
-  .logo-text .name{font-size:18px;font-weight:900;color:var(--brand)}
-  .nav{display:flex;gap:24px;font-size:14px;font-weight:500}
-  .nav a:hover{color:var(--brand)}
-  .header-cta{background:var(--brand);color:#fff;padding:10px 20px;border-radius:4px;font-size:13px;font-weight:700;transition:.2s}
-  .header-cta:hover{background:var(--brand-dark)}
-
-  .hero{background:linear-gradient(135deg,rgba(22,59,93,.88) 0%,rgba(31,78,121,.78) 50%,rgba(42,99,148,.70) 100%),url('images/hero.jpg') center/cover no-repeat;color:#fff;padding:96px 24px 112px;text-align:center;position:relative;overflow:hidden}
-  .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 30%,rgba(200,168,91,.18),transparent 40%),radial-gradient(circle at 80% 70%,rgba(255,255,255,.06),transparent 50%);pointer-events:none}
-  .hero h1{font-size:clamp(28px,4vw,44px);font-weight:900;line-height:1.4;margin-bottom:24px;letter-spacing:.02em}
-  .hero .lead{font-size:clamp(15px,1.6vw,18px);max-width:720px;margin:0 auto 32px;opacity:.95}
-  .hero-badge{display:inline-block;background:rgba(200,168,91,.2);border:1px solid var(--accent);color:var(--accent);padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:24px;letter-spacing:.05em}
-  .hero-cta{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#222;padding:16px 36px;border-radius:6px;font-weight:900;font-size:16px;box-shadow:0 4px 14px rgba(200,168,91,.4);transition:.2s}
-  .hero-cta:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(200,168,91,.5)}
-
-  section{padding:80px 0}
-  .section-head{text-align:center;margin-bottom:56px}
-  .section-head .en{font-size:13px;color:var(--accent);letter-spacing:.2em;font-weight:700;display:block;margin-bottom:8px}
-  .section-head h2{font-size:clamp(24px,3vw,32px);font-weight:900;color:var(--brand);position:relative;display:inline-block;padding-bottom:16px}
-  .section-head h2::after{content:"";position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:48px;height:3px;background:var(--accent)}
-
-  .strengths{background:var(--white)}
-  .strength-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
-  .strength-card{padding:32px 24px;border:1px solid var(--line);border-radius:8px;background:var(--bg);text-align:center;transition:.2s}
-  .strength-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.08)}
-  .strength-card .num{display:inline-block;font-size:32px;font-weight:900;color:var(--accent);margin-bottom:12px;font-family:Georgia,serif}
-  .strength-card h3{font-size:18px;font-weight:900;color:var(--brand);margin-bottom:12px}
-  .strength-card p{font-size:14px;color:var(--muted)}
-
-  .services{background:var(--bg)}
-  .service-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
-  .service-item{background:var(--white);padding:28px;border-left:4px solid var(--brand);border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-  .service-item h3{font-size:17px;font-weight:900;color:var(--brand);margin-bottom:12px}
-  .service-item p{font-size:14px;color:var(--muted)}
-
-  .pricing{background:var(--white)}
-  .price-table{max-width:780px;margin:0 auto;border-collapse:collapse;background:var(--white);box-shadow:0 2px 12px rgba(0,0,0,.06);border-radius:8px;overflow:hidden}
-  .price-table th,.price-table td{padding:18px 20px;text-align:left;border-bottom:1px solid var(--line);font-size:14px}
-  .price-table th{background:var(--brand);color:#fff;font-weight:700}
-  .price-table td.price{font-weight:900;color:var(--brand);font-size:16px;text-align:right;white-space:nowrap}
-  .price-note{max-width:780px;margin:16px auto 0;font-size:12px;color:var(--muted);text-align:center}
-
-  .profile{background:var(--bg)}
-  .profile-card{max-width:780px;margin:0 auto;background:var(--white);padding:40px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.06);display:flex;gap:32px;align-items:center;flex-wrap:wrap}
-  .profile-photo{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;font-size:48px;font-weight:900;flex-shrink:0}
-  .profile-body{flex:1;min-width:240px}
-  .profile-body .role{font-size:12px;color:var(--muted);letter-spacing:.1em}
-  .profile-body h3{font-size:22px;font-weight:900;color:var(--brand);margin:4px 0 16px}
-  .profile-body p{font-size:14px;color:var(--text);line-height:1.8}
-
-  .faq{background:var(--white)}
-  .faq-list{max-width:780px;margin:0 auto}
-  .faq-item{border:1px solid var(--line);border-radius:6px;margin-bottom:12px;background:var(--bg);overflow:hidden}
-  .faq-q{padding:18px 24px;font-weight:700;color:var(--brand);position:relative;padding-left:60px}
-  .faq-q::before{content:"Q";position:absolute;left:24px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px}
-  .faq-a{padding:0 24px 18px 60px;font-size:14px;color:var(--muted);position:relative}
-  .faq-a::before{content:"A";position:absolute;left:24px;top:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
-
-  .access{background:var(--bg)}
-  .access-grid{max-width:900px;margin:0 auto;background:var(--white);padding:32px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
-  .access-map{position:relative;border-radius:6px;overflow:hidden}
-  .access-map img{width:100%;height:280px;object-fit:cover;display:block}
-  .access-map .map-caption{position:absolute;bottom:8px;left:8px;background:rgba(255,255,255,.92);color:var(--brand);font-size:11px;font-weight:700;padding:4px 10px;border-radius:3px;letter-spacing:.05em}
-  .access-info dl{display:grid;grid-template-columns:100px 1fr;gap:12px 16px;font-size:14px}
-  .access-info dt{font-weight:700;color:var(--brand)}
-  .access-info dd{color:var(--text)}
-
-  .contact{background:linear-gradient(135deg,#163b5d,#1f4e79);color:#fff;text-align:center}
-  .contact .section-head h2{color:#fff}
-  .contact .section-head .en{color:var(--accent)}
-  .contact-lead{max-width:640px;margin:0 auto 40px;font-size:15px;opacity:.95}
-  .contact-cta{display:inline-flex;align-items:center;gap:12px;background:var(--accent);color:#222;padding:20px 48px;border-radius:6px;font-weight:900;font-size:17px;box-shadow:0 6px 20px rgba(200,168,91,.4);transition:.2s}
-  .contact-cta:hover{transform:translateY(-2px)}
-  .contact-info{margin-top:32px;font-size:14px;opacity:.9}
-
-  footer{background:#0d1f33;color:#a8b8c8;padding:32px 24px;text-align:center;font-size:13px}
-  footer .footer-name{color:#fff;font-weight:700;font-size:15px;margin-bottom:4px}
-
-  @media (max-width:768px){
-    .nav{display:none}
-    section{padding:56px 0}
-    .hero{padding:60px 24px 72px}
-    .profile-card{padding:24px;text-align:center;justify-content:center}
-    .access-grid{grid-template-columns:1fr;gap:20px}
-    .access-info dl{grid-template-columns:90px 1fr}
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>みらい税理士事務所 | 相談しやすく節税に強い税理士【提案サンプル】</title>
+  <meta name="description"
+    content="相談しやすく、節税・資金繰りまで踏み込んで提案する税理士事務所。クラウド会計（freee・マネーフォワード）対応、開業・創業支援に強い。初回相談無料。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Maru+Gothic:wght@500;700;900&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --teal:#2f6db0;--teal-d:#234f82;--teal-l:#e8f0f9;--teal-pale:#f4f8fd;
+      --cream:#fbf8f2;--ink:#222d38;--ink-sub:#566472;--line:#dfe8f0;
+      --coral:#eb9447;--coral-d:#d97f34;--gold:#e6b545;--white:#fff;
+      --shadow:0 14px 40px rgba(47,109,176,.14);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Noto Sans JP',sans-serif;color:var(--ink);line-height:1.85;background:var(--white);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+    img{max-width:100%;display:block}a{text-decoration:none;color:inherit}
+    .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+    .sec{padding:84px 0}.sec-cream{background:var(--cream)}.sec-pale{background:var(--teal-pale)}
+    h2.title{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;font-size:clamp(23px,3.5vw,33px);line-height:1.4;text-align:center}
+    .eyebrow{display:block;text-align:center;font-size:12px;font-weight:700;letter-spacing:.22em;color:var(--teal);margin-bottom:10px}
+    .lead{text-align:center;color:var(--ink-sub);font-size:15.5px;max-width:620px;margin:14px auto 0}
+    .btn{display:inline-flex;align-items:center;gap:9px;padding:15px 32px;border-radius:100px;font-weight:700;font-size:15.5px;transition:.22s;cursor:pointer}
+    .btn-coral{background:var(--coral);color:#fff;box-shadow:0 8px 22px rgba(235,148,71,.36)}
+    .btn-coral:hover{background:var(--coral-d);transform:translateY(-2px)}
+    .btn-ghost{background:#fff;color:var(--teal-d);border:2px solid var(--teal)}.btn-ghost:hover{background:var(--teal-l)}
+    .ic{width:1em;height:1em;display:inline-block;vertical-align:-.12em;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}.reveal.in{opacity:1;transform:none}
+    .banner{background:#26313d;color:#fff;font-size:12.5px;text-align:center;padding:9px 16px;line-height:1.6}.banner b{color:#ffd9a8}
+    header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+    .hd{max-width:1080px;margin:0 auto;padding:11px 22px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:11px}
+    .brand .mk{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--teal),var(--teal-d));display:flex;align-items:center;justify-content:center;color:#fff}
+    .brand .nm{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;font-size:19px;color:var(--teal-d);line-height:1.2}
+    .brand .sb{font-size:10.5px;color:var(--ink-sub)}
+    .hd-tel{display:flex;align-items:center;gap:8px}
+    .hd-tel .no{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;font-size:20px;color:var(--teal-d);line-height:1}
+    .hd-tel .tx{font-size:10px;color:var(--ink-sub)}
+    .hd-cta{background:var(--coral);color:#fff;padding:10px 18px;border-radius:100px;font-size:13px;font-weight:700}
+    @media(max-width:720px){.hd-tel{display:none}}
+    .hero{position:relative;background:linear-gradient(165deg,#eef4fb 0%,#dce8f5 55%,#cfe0f0 100%);overflow:hidden}
+    .hero .blob{position:absolute;border-radius:50%;filter:blur(2px);opacity:.5}
+    .hero .b1{width:520px;height:520px;background:radial-gradient(circle,rgba(235,148,71,.18),transparent 70%);top:-160px;right:-120px}
+    .hero .b2{width:420px;height:420px;background:radial-gradient(circle,rgba(47,109,176,.16),transparent 70%);bottom:-150px;left:-120px}
+    .hero-in{position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:62px 22px;display:grid;grid-template-columns:1.05fr .95fr;gap:46px;align-items:center}
+    .hero-chip{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1.5px solid var(--teal);color:var(--teal-d);font-size:12px;font-weight:700;padding:7px 15px;border-radius:100px;margin-bottom:20px}
+    .hero h1{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;font-size:clamp(28px,4.6vw,45px);line-height:1.32;letter-spacing:-.01em}
+    .hero h1 em{font-style:normal;color:var(--teal-d);background:linear-gradient(transparent 62%,rgba(230,181,69,.45) 62%)}
+    .hero p.sub{font-size:15.5px;color:var(--ink-sub);margin:18px 0 26px;line-height:1.95}
+    .hero-btns{display:flex;gap:13px;flex-wrap:wrap}
+    .hero-trust{display:flex;gap:18px;margin-top:28px;flex-wrap:wrap}
+    .hero-trust div{font-size:12.5px;color:var(--teal-d);font-weight:700;display:flex;align-items:center;gap:6px}
+    .hero-art{position:relative;display:flex;align-items:center;justify-content:center;min-height:340px}
+    .art-card{position:absolute;background:#fff;border-radius:18px;box-shadow:var(--shadow);padding:16px 18px;display:flex;align-items:center;gap:11px;font-size:13px;font-weight:700;color:var(--ink)}
+    .art-card .ci{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+    .art-main{width:248px;height:248px;border-radius:50%;background:linear-gradient(150deg,var(--teal),var(--teal-d));display:flex;align-items:center;justify-content:center;box-shadow:0 24px 60px rgba(35,79,130,.4)}
+    .art-main svg{width:118px;height:118px;stroke:#fff;fill:none;stroke-width:1.6;opacity:.96}
+    .ac1{top:14px;left:-6px}.ac1 .ci{background:var(--coral)}.ac2{bottom:30px;right:-10px}.ac2 .ci{background:var(--teal)}.ac3{bottom:-6px;left:30px}.ac3 .ci{background:var(--gold)}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .wcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 22px;text-align:center;transition:.22s}
+    .wcard:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--teal-l)}
+    .wcard .wi{width:54px;height:54px;border-radius:14px;background:var(--teal-l);color:var(--teal-d);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+    .wcard .wi svg{width:26px;height:26px}.wcard p{font-size:14.5px}
+    .rcard{display:grid;grid-template-columns:70px 1fr;gap:22px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:20px;padding:30px 32px;box-shadow:0 4px 18px rgba(47,109,176,.05)}
+    .rcard+.rcard{margin-top:20px}
+    .rcard .rno{width:64px;height:64px;border-radius:16px;background:linear-gradient(140deg,var(--teal-l),#d4e3f2);color:var(--teal-d);display:flex;align-items:center;justify-content:center}
+    .rcard .rno svg{width:30px;height:30px}
+    .rcard h3{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;font-size:19px;color:var(--teal-d);margin-bottom:8px}
+    .rcard p{font-size:14.5px;color:var(--ink-sub)}
+    .rcard .tagline{display:inline-block;font-size:11.5px;font-weight:700;color:var(--coral-d);background:#fdeee6;padding:3px 11px;border-radius:100px;margin-bottom:10px}
+    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .mcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 20px;transition:.22s}
+    .mcard:hover{border-color:var(--teal);box-shadow:var(--shadow);transform:translateY(-3px)}
+    .mcard .mi{width:46px;height:46px;border-radius:12px;background:var(--teal-l);color:var(--teal-d);display:flex;align-items:center;justify-content:center;margin-bottom:13px}
+    .mcard .mi svg{width:24px;height:24px}
+    .mcard h4{font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:15.5px;margin-bottom:6px}
+    .mcard p{font-size:13px;color:var(--ink-sub);line-height:1.7}
+    .msg{display:grid;grid-template-columns:300px 1fr;gap:44px;align-items:center}
+    .msg-portrait{background:linear-gradient(160deg,var(--teal),var(--teal-d));border-radius:24px;padding:40px 26px;text-align:center;color:#fff;box-shadow:var(--shadow)}
+    .msg-portrait .ring{width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+    .msg-portrait .ring svg{width:60px;height:60px;stroke:#fff;fill:none;stroke-width:1.6}
+    .msg-portrait .nm{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;font-size:20px}
+    .msg-portrait .ro{font-size:12.5px;opacity:.86;margin-top:3px}
+    .msg-portrait .qual{margin-top:16px;display:flex;flex-direction:column;gap:7px}
+    .msg-portrait .qual span{background:rgba(255,255,255,.15);border-radius:8px;padding:6px;font-size:12px;font-weight:700}
+    .msg-body .q{font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:clamp(19px,2.6vw,25px);color:var(--teal-d);line-height:1.6;margin-bottom:18px}
+    .msg-body p{font-size:14.5px;color:var(--ink-sub);margin-bottom:14px}
+    .feat{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .fcard{background:var(--cream);border-radius:16px;padding:26px 22px}
+    .fcard .fi{color:var(--coral-d);margin-bottom:10px}.fcard .fi svg{width:30px;height:30px}
+    .fcard h4{font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:16px;margin-bottom:7px}
+    .fcard p{font-size:13.5px;color:var(--ink-sub)}
+    .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .fl{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px 20px}
+    .fl .n{width:38px;height:38px;border-radius:50%;background:var(--teal);color:#fff;font-family:'Zen Maru Gothic',sans-serif;font-weight:900;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+    .fl h4{font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:15px;margin-bottom:5px}.fl p{font-size:13px;color:var(--ink-sub)}
+    .faq{max-width:760px;margin:0 auto}
+    .qa{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:13px;overflow:hidden}
+    .qa summary{list-style:none;cursor:pointer;padding:18px 22px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;gap:12px;align-items:center}
+    .qa summary::-webkit-details-marker{display:none}
+    .qa summary .pm{color:var(--teal);font-size:22px;font-weight:300;transition:.3s}.qa[open] summary .pm{transform:rotate(45deg)}
+    .qa .a{padding:0 22px 18px;font-size:14px;color:var(--ink-sub);border-top:1px solid var(--line)}.qa .a p{padding-top:14px}
+    .acc{display:grid;grid-template-columns:1fr 1.1fr;gap:40px;align-items:stretch}
+    .acc-info h3{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;font-size:21px;color:var(--teal-d);margin-bottom:14px}
+    .acc-info .row{display:flex;gap:11px;align-items:flex-start;font-size:14.5px;margin-bottom:10px}
+    .acc-info .row svg{width:20px;height:20px;color:var(--teal);flex-shrink:0;margin-top:4px}
+    .htable{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+    .htable th,.htable td{border:1px solid var(--line);padding:7px 9px;text-align:left}
+    .htable thead th{background:var(--teal-l);color:var(--teal-d);font-weight:700}
+    .acc-map iframe{width:100%;height:100%;min-height:340px;border:0;border-radius:18px}
+    .cta{background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;text-align:center;padding:80px 0;position:relative;overflow:hidden}
+    .cta::before{content:"";position:absolute;width:460px;height:460px;border-radius:50%;background:rgba(255,255,255,.06);top:-160px;right:-120px}
+    .cta h2{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;font-size:clamp(24px,3.6vw,34px);margin-bottom:12px;position:relative}
+    .cta p{opacity:.9;margin-bottom:26px;position:relative}
+    .cta .tel{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;font-size:clamp(30px,5vw,42px);position:relative;letter-spacing:.02em}
+    .cta .hours{font-size:13px;opacity:.85;position:relative;margin-top:4px}
+    .cta .btn-white{display:inline-flex;margin-top:22px;background:#fff;color:var(--teal-d);position:relative}
+    footer{background:#1d2731;color:rgba(255,255,255,.72);padding:44px 0;font-size:13px}
+    footer .fn{font-family:'Zen Maru Gothic',sans-serif;font-weight:900;font-size:19px;color:#fff;margin-bottom:8px}
+    footer .note{margin-top:20px;font-size:11.5px;opacity:.6;line-height:1.7;border-top:1px solid rgba(255,255,255,.1);padding-top:16px}
+    .mcta{display:none;position:fixed;bottom:0;left:0;right:0;z-index:70;background:#fff;box-shadow:0 -4px 20px rgba(0,0,0,.1);padding:9px;gap:9px}
+    .mcta a{flex:1;text-align:center;padding:13px;border-radius:12px;font-weight:700;font-size:14px}.mcta .t{background:var(--teal);color:#fff}.mcta .r{background:var(--coral);color:#fff}
+    @media(max-width:860px){.hero-in,.msg,.acc{grid-template-columns:1fr;gap:30px}.hero-art{min-height:280px;order:-1}.grid4{grid-template-columns:1fr 1fr}.feat,.flow{grid-template-columns:1fr 1fr}.msg-portrait{max-width:320px;margin:0 auto}}
+    @media(max-width:560px){.sec{padding:58px 0}.grid3{grid-template-columns:1fr}.grid4{grid-template-columns:1fr 1fr}.flow{grid-template-columns:1fr 1fr}.rcard{grid-template-columns:1fr;gap:14px}.mcta{display:flex}body{padding-bottom:66px}}
+  </style>
 </head>
+
 <body>
+  <div class="banner">これは <b>医院LP研究所</b> が制作した <b>税理士事務所向けの提案サンプル（制作例）</b> です。架空の事務所「みらい税理士事務所」を題材にしています（実在しません）。</div>
+  <header>
+    <div class="hd">
+      <div class="brand">
+        <div class="mk"><svg class="ic" style="width:24px;height:24px"><use href="#i-doc"/></svg></div>
+        <div><div class="nm">みらい税理士事務所</div><div class="sb">中小企業・個人事業・開業の頼れる相談相手</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div class="hd-tel"><div><div class="no">03-1234-5678</div><div class="tx">平日 9:00–18:00／初回相談無料</div></div></div>
+        <a href="#contact" class="hd-cta">無料相談</a>
+      </div>
+    </div>
+  </header>
 
-<div class="sample-banner">
-  ※本ページは「医院LP研究所」が提示する税理士事務所向けLPサンプルです。実在の事務所ではありません。
-</div>
+  <section class="hero">
+    <span class="blob b1"></span><span class="blob b2"></span>
+    <div class="hero-in">
+      <div class="reveal">
+        <span class="hero-chip"><svg class="ic"><use href="#i-chat"/></svg> 初回相談無料・オンライン対応</span>
+        <h1>相談しやすく、<br><em>節税に強い税理士</em>。</h1>
+        <p class="sub">「ただ申告するだけ」の税理士で、もったいない思いをしていませんか。<br>数字の先にある<strong>経営・節税・資金繰り</strong>まで踏み込んでご提案。クラウド会計対応で、面倒な記帳もラクになります。</p>
+        <div class="hero-btns">
+          <a href="#contact" class="btn btn-coral"><svg class="ic"><use href="#i-chat"/></svg> 無料で相談する</a>
+          <a href="#service" class="btn btn-ghost">サービスを見る</a>
+        </div>
+        <div class="hero-trust">
+          <div><svg class="ic"><use href="#i-coin"/></svg> 節税・資金繰りの提案</div>
+          <div><svg class="ic"><use href="#i-sparkle"/></svg> クラウド会計対応</div>
+          <div><svg class="ic"><use href="#i-rocket"/></svg> 開業・創業に強い</div>
+        </div>
+      </div>
+      <div class="hero-art reveal">
+        <div class="art-main"><svg viewBox="0 0 24 24"><use href="#i-chart"/></svg></div>
+        <div class="art-card ac1"><span class="ci"><svg class="ic" style="width:20px;height:20px"><use href="#i-coin"/></svg></span>節税に強い</div>
+        <div class="art-card ac2"><span class="ci"><svg class="ic" style="width:20px;height:20px"><use href="#i-chat"/></svg></span>相談しやすい</div>
+        <div class="art-card ac3"><span class="ci"><svg class="ic" style="width:20px;height:20px"><use href="#i-sparkle"/></svg></span>クラウド会計</div>
+      </div>
+    </div>
+  </section>
 
-<header class="header">
-  <div class="header-inner">
-    <div class="logo">
-      <div class="logo-mark">税</div>
-      <div class="logo-text">
-        <div class="sub">医院・クリニック専門</div>
-        <div class="name">サンプル税理士事務所</div>
+  <section class="sec">
+    <div class="wrap">
+      <div class="reveal" style="margin-bottom:46px"><span class="eyebrow">YOUR WORRY</span><h2 class="title">税理士について、こんなお悩みありませんか？</h2></div>
+      <div class="grid3">
+        <div class="wcard reveal"><div class="wi"><svg class="ic"><use href="#i-chat"/></svg></div><p>今の税理士に<strong>相談しづらい・反応が遅い</strong></p></div>
+        <div class="wcard reveal"><div class="wi"><svg class="ic"><use href="#i-coin"/></svg></div><p>言われた通り申告するだけで<strong>節税の提案がない</strong></p></div>
+        <div class="wcard reveal"><div class="wi"><svg class="ic"><use href="#i-doc"/></svg></div><p>記帳・領収書整理に<strong>毎月追われている</strong></p></div>
+        <div class="wcard reveal"><div class="wi"><svg class="ic"><use href="#i-sparkle"/></svg></div><p><strong>クラウド会計</strong>に対応してほしい</p></div>
+        <div class="wcard reveal"><div class="wi"><svg class="ic"><use href="#i-rocket"/></svg></div><p>これから<strong>開業・法人化</strong>するが相談相手がいない</p></div>
+        <div class="wcard reveal"><div class="wi"><svg class="ic"><use href="#i-shield"/></svg></div><p>顧問料が<strong>適正か分からない・不明瞭</strong></p></div>
       </div>
     </div>
-    <nav class="nav">
-      <a href="#strengths">強み</a>
-      <a href="#services">サービス</a>
-      <a href="#pricing">料金</a>
-      <a href="#profile">代表</a>
-      <a href="#faq">FAQ</a>
-      <a href="#access">アクセス</a>
-    </nav>
-    <a href="#contact" class="header-cta">無料相談</a>
-  </div>
-</header>
+  </section>
 
-<section class="hero">
-  <div class="container">
-    <span class="hero-badge">医院・クリニック専門</span>
-    <h1>院長先生が「診療に専念できる」<br>財務・税務パートナー</h1>
-    <p class="lead">
-      開業準備から医療法人化、自費診療の収益最適化、補助金活用まで。<br>
-      医療業界の制度・補助金・節税スキームに精通した税理士が、院長先生の財務戦略をサポートします。
-    </p>
-    <a href="#contact" class="hero-cta">初回相談 無料 →</a>
-  </div>
-</section>
+  <section class="sec sec-cream">
+    <div class="wrap">
+      <div class="reveal" style="margin-bottom:46px"><span class="eyebrow">REASON</span><h2 class="title">みらい税理士事務所が選ばれる4つの理由</h2></div>
+      <div class="rcard reveal"><div class="rno"><svg class="ic"><use href="#i-chat"/></svg></div><div><span class="tagline">相談しやすさ</span><h3>気軽に相談できる、近い距離感</h3><p>「こんなこと聞いていいのかな」も大歓迎。レスポンス早く、専門用語をかみくだいてご説明します。経営の相談相手として、いつでも頼れる存在を目指します。</p></div></div>
+      <div class="rcard reveal"><div class="rno"><svg class="ic"><use href="#i-coin"/></svg></div><div><span class="tagline">節税・経営提案</span><h3>申告だけで終わらせない</h3><p>数字を「報告」するだけでなく、節税・資金繰り・利益改善まで踏み込んでご提案。先を見据えた経営のパートナーとして伴走します。</p></div></div>
+      <div class="rcard reveal"><div class="rno"><svg class="ic"><use href="#i-sparkle"/></svg></div><div><span class="tagline">クラウド会計対応</span><h3>freee・マネーフォワードで記帳をラクに</h3><p>クラウド会計の導入・運用をサポート。日々の記帳の手間を減らし、いつでも最新の経営状況が見える環境を整えます。</p></div></div>
+      <div class="rcard reveal"><div class="rno"><svg class="ic"><use href="#i-rocket"/></svg></div><div><span class="tagline">開業・創業に強い</span><h3>これから始める方を全力サポート</h3><p>開業届・法人設立・資金調達・補助金まで、スタートのつまずきやすいポイントを一緒に乗り越えます。創業期から長くお付き合いできます。</p></div></div>
+    </div>
+  </section>
 
-<section class="strengths" id="strengths">
-  <div class="container">
-    <div class="section-head">
-      <span class="en">OUR STRENGTHS</span>
-      <h2>選ばれる4つの理由</h2>
-    </div>
-    <div class="strength-grid">
-      <div class="strength-card">
-        <div class="num">01</div>
-        <h3>医院特化の実績</h3>
-        <p>整骨院・歯科・内科・自費診療系クリニックの顧問実績多数。業界特有の処理を熟知。</p>
-      </div>
-      <div class="strength-card">
-        <div class="num">02</div>
-        <h3>開業から法人化まで</h3>
-        <p>開業計画書作成、融資サポート、医療法人化までワンストップ。タイミング判断も的確に。</p>
-      </div>
-      <div class="strength-card">
-        <div class="num">03</div>
-        <h3>補助金・助成金対応</h3>
-        <p>IT導入補助金、事業再構築補助金、医療系の各種助成金まで、申請を伴走サポート。</p>
-      </div>
-      <div class="strength-card">
-        <div class="num">04</div>
-        <h3>クラウド会計対応</h3>
-        <p>freee、マネーフォワード、弥生クラウド対応。レセコンとの連携も支援します。</p>
+  <section class="sec" id="service">
+    <div class="wrap">
+      <div class="reveal" style="margin-bottom:46px"><span class="eyebrow">SERVICE</span><h2 class="title">サービス内容</h2><p class="lead">日々の記帳から、決算・節税・経営支援・相続まで幅広く対応します。</p></div>
+      <div class="grid4">
+        <div class="mcard reveal"><div class="mi"><svg class="ic"><use href="#i-doc"/></svg></div><h4>記帳代行</h4><p>面倒な記帳をお任せ。本業に集中できる環境をつくります。</p></div>
+        <div class="mcard reveal"><div class="mi"><svg class="ic"><use href="#i-chart"/></svg></div><h4>決算・確定申告</h4><p>法人決算・個人の確定申告を、正確かつ期限内に対応します。</p></div>
+        <div class="mcard reveal"><div class="mi"><svg class="ic"><use href="#i-coin"/></svg></div><h4>節税対策</h4><p>使える制度を漏れなく。合法的な節税を先回りでご提案します。</p></div>
+        <div class="mcard reveal"><div class="mi"><svg class="ic"><use href="#i-rocket"/></svg></div><h4>開業・会社設立支援</h4><p>開業届・法人設立・許認可まで、スタートを一気通貫で支援。</p></div>
+        <div class="mcard reveal"><div class="mi"><svg class="ic"><use href="#i-sparkle"/></svg></div><h4>クラウド会計導入</h4><p>freee・マネーフォワードの導入・設定・運用をサポート。</p></div>
+        <div class="mcard reveal"><div class="mi"><svg class="ic"><use href="#i-shield"/></svg></div><h4>資金調達・補助金</h4><p>融資・補助金の申請を、事業計画づくりからお手伝いします。</p></div>
+        <div class="mcard reveal"><div class="mi"><svg class="ic"><use href="#i-home"/></svg></div><h4>相続・事業承継</h4><p>相続税対策・事業の引き継ぎを、早めの設計でサポートします。</p></div>
+        <div class="mcard reveal"><div class="mi"><svg class="ic"><use href="#i-chat"/></svg></div><h4>月次顧問</h4><p>毎月の数字を一緒に確認し、経営判断をサポートします。</p></div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="services" id="services">
-  <div class="container">
-    <div class="section-head">
-      <span class="en">SERVICES</span>
-      <h2>提供サービス</h2>
-    </div>
-    <div class="service-list">
-      <div class="service-item">
-        <h3>月次顧問・記帳代行</h3>
-        <p>毎月の財務状況把握と税務相談。月次試算表で経営判断をサポート。</p>
-      </div>
-      <div class="service-item">
-        <h3>決算・確定申告</h3>
-        <p>年次決算、所得税・法人税申告。節税スキームの提案も含めて対応。</p>
-      </div>
-      <div class="service-item">
-        <h3>開業支援</h3>
-        <p>事業計画書、金融機関融資、保健所手続き、開業届出までトータルサポート。</p>
-      </div>
-      <div class="service-item">
-        <h3>医療法人化支援</h3>
-        <p>個人クリニックから医療法人への移行判断と手続き、認可申請を支援。</p>
-      </div>
-      <div class="service-item">
-        <h3>節税・資産形成相談</h3>
-        <p>院長個人の所得税最適化、退職金準備、相続対策まで個別にプランニング。</p>
-      </div>
-      <div class="service-item">
-        <h3>補助金・助成金申請</h3>
-        <p>医療機器導入、IT化、人材確保等の各種補助金の情報提供と申請伴走。</p>
+  <section class="sec sec-pale">
+    <div class="wrap">
+      <div class="msg">
+        <div class="msg-portrait reveal"><div class="ring"><svg viewBox="0 0 24 24"><use href="#i-doctor"/></svg></div><div class="nm">みらい税理士事務所</div><div class="ro">代表税理士</div><div class="qual"><span>節税・経営支援に強い</span><span>クラウド会計対応</span><span>初回相談無料</span></div></div>
+        <div class="msg-body reveal">
+          <span class="eyebrow" style="text-align:left">MESSAGE</span>
+          <p class="q">数字の先にある「経営」を、<br>一緒に考える税理士でありたい。</p>
+          <p>税理士の仕事は、申告書を作ることだけではありません。お客様の事業が伸び、安心して経営できるように——数字を通して未来を一緒に描くことだと考えています。</p>
+          <p>だからこそ、相談しやすさと、踏み込んだ提案を大切にしています。これから開業される方も、今の税理士に物足りなさを感じている方も、まずはお気軽にご相談ください。初回相談は無料です。</p>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="pricing" id="pricing">
-  <div class="container">
-    <div class="section-head">
-      <span class="en">PRICING</span>
-      <h2>料金プラン（参考）</h2>
+  <section class="sec">
+    <div class="wrap">
+      <div class="reveal" style="margin-bottom:46px"><span class="eyebrow">FLOW</span><h2 class="title">ご相談の流れ</h2></div>
+      <div class="flow">
+        <div class="fl reveal"><div class="n">1</div><h4>お問い合わせ</h4><p>電話またはフォームから。まずは無料相談のご予約を。</p></div>
+        <div class="fl reveal"><div class="n">2</div><h4>無料相談（ヒアリング）</h4><p>現状やお悩み、ご希望をじっくりお聞きします。</p></div>
+        <div class="fl reveal"><div class="n">3</div><h4>ご提案・お見積り</h4><p>最適なプランと料金を、分かりやすくご提示します。</p></div>
+        <div class="fl reveal"><div class="n">4</div><h4>契約・サポート開始</h4><p>ご納得のうえ契約。月次でしっかり伴走します。</p></div>
+      </div>
     </div>
-    <table class="price-table">
-      <tr><th>プラン</th><th>対象</th><th style="text-align:right">月額（税抜）</th></tr>
-      <tr><td>スタートプラン</td><td>個人開業・年商3,000万円未満</td><td class="price">¥30,000〜</td></tr>
-      <tr><td>スタンダードプラン</td><td>個人開業・年商3,000万〜1億円</td><td class="price">¥50,000〜</td></tr>
-      <tr><td>法人プラン</td><td>医療法人・年商1億円超</td><td class="price">¥80,000〜</td></tr>
-      <tr><td>決算料</td><td>年1回</td><td class="price">月額×4〜6ヶ月相当</td></tr>
-    </table>
-    <p class="price-note">※料金は規模・取引量によりお見積もりいたします。初回相談・お見積もりは無料です。</p>
-  </div>
-</section>
+  </section>
 
-<section class="profile" id="profile">
-  <div class="container">
-    <div class="section-head">
-      <span class="en">REPRESENTATIVE</span>
-      <h2>代表プロフィール</h2>
-    </div>
-    <div class="profile-card">
-      <div class="profile-photo">税</div>
-      <div class="profile-body">
-        <div class="role">代表税理士</div>
-        <h3>サンプル 太郎</h3>
-        <p>
-          税理士登録番号 第000000号。大手会計事務所にて医療法人担当を経験後、医院・クリニック専門の税理士事務所を開業。
-          整骨院・歯科・内科・美容クリニックなど多様な医院の財務をサポート。
-          「数字に強い院長が、診療に強い院長になる」を信念に、わかりやすい説明と先回りの提案を心がけています。
-        </p>
+  <section class="sec sec-cream">
+    <div class="wrap">
+      <div class="reveal" style="margin-bottom:40px"><span class="eyebrow">FAQ</span><h2 class="title">よくあるご質問</h2></div>
+      <div class="faq">
+        <details class="qa reveal"><summary>今の税理士から変更（乗り換え）はできますか？<span class="pm">+</span></summary><div class="a"><p>はい、可能です。引き継ぎの段取りもサポートしますのでご安心ください。タイミングのご相談だけでも歓迎です。</p></div></details>
+        <details class="qa reveal"><summary>顧問料はどのくらいですか？<span class="pm">+</span></summary><div class="a"><p>事業規模やご依頼内容により異なります。初回相談で内容をお聞きし、明確なお見積りをご提示します。料金が不明瞭ということはありません。</p></div></details>
+        <details class="qa reveal"><summary>開業前でも相談できますか？<span class="pm">+</span></summary><div class="a"><p>もちろんです。開業届・法人設立・資金調達など、スタート前のご相談こそ大歓迎です。早めのご相談ほど選択肢が広がります。</p></div></details>
+        <details class="qa reveal"><summary>クラウド会計（freee・マネーフォワード）に対応していますか？<span class="pm">+</span></summary><div class="a"><p>はい、対応しています。導入・初期設定・運用までサポートし、日々の記帳を効率化します。</p></div></details>
+        <details class="qa reveal"><summary>遠方やオンラインでも依頼できますか？<span class="pm">+</span></summary><div class="a"><p>はい。オンライン面談・クラウドでのやり取りに対応しており、遠方の方もご利用いただけます。</p></div></details>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="faq" id="faq">
-  <div class="container">
-    <div class="section-head">
-      <span class="en">FAQ</span>
-      <h2>よくあるご質問</h2>
+  <section class="sec sec-pale" id="access">
+    <div class="wrap">
+      <div class="reveal" style="margin-bottom:40px"><span class="eyebrow">ACCESS</span><h2 class="title">事務所案内</h2></div>
+      <div class="acc">
+        <div class="acc-info reveal">
+          <h3>みらい税理士事務所 <span style="font-size:.6em;color:#9aa7b3;font-weight:normal;">※制作サンプル（実在しません）</span></h3>
+          <div class="row"><svg class="ic"><use href="#i-pin"/></svg><span>〒100-0005 東京都千代田区丸の内1-1-1 サンプルビル5F</span></div>
+          <div class="row"><svg class="ic"><use href="#i-phone"/></svg><span><a href="tel:0312345678" style="color:var(--teal-d);font-weight:700">03-1234-5678</a></span></div>
+          <table class="htable">
+            <tbody>
+              <tr><th>営業時間</th><td>平日 9:00〜18:00</td></tr>
+              <tr><th>定休日</th><td>土・日・祝（事前予約で時間外対応可）</td></tr>
+              <tr><th>対応</th><td>来所／オンライン面談／訪問</td></tr>
+              <tr><th>初回相談</th><td>無料</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="acc-map reveal">
+          <iframe loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen
+            src="https://www.google.com/maps?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E5%8D%83%E4%BB%A3%E7%94%B0%E5%8C%BA%E4%B8%B8%E3%81%AE%E5%86%85&output=embed"></iframe>
+        </div>
+      </div>
     </div>
-    <div class="faq-list">
-      <div class="faq-item">
-        <div class="faq-q">他事務所からの乗り換えは可能ですか？</div>
-        <div class="faq-a">はい、可能です。引継ぎ作業も丁寧に対応いたします。決算期のタイミングに合わせるとスムーズです。</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q">対応エリアはどこまでですか？</div>
-        <div class="faq-a">関東圏を中心に対応しております。クラウド会計を活用し、遠方の医院様も対応可能です。</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q">開業前の段階から相談できますか？</div>
-        <div class="faq-a">はい、開業準備段階からのご相談を歓迎いたします。事業計画・融資・物件選定の財務観点でアドバイスいたします。</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q">レセコンとの連携はできますか？</div>
-        <div class="faq-a">主要レセコン（メディコム・ダイナミクス等）からのデータ取り込みに対応しています。</div>
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section class="access" id="access">
-  <div class="container">
-    <div class="section-head">
-      <span class="en">ACCESS</span>
-      <h2>アクセス</h2>
+  <section class="cta" id="contact">
+    <div class="wrap">
+      <h2>まずは無料相談から</h2>
+      <p>「ちょっと聞いてみたい」だけでも大歓迎。お気軽にご連絡ください。</p>
+      <div class="tel">📞 03-1234-5678</div>
+      <div class="hours">平日 9:00〜18:00／初回相談無料</div>
+      <a href="tel:0312345678" class="btn btn-white"><svg class="ic"><use href="#i-phone"/></svg> 電話で無料相談する</a>
     </div>
-    <div class="access-grid">
-      <div class="access-map">
-        <img src="images/map.jpg" alt="周辺エリアのイメージ" loading="lazy" />
-        <span class="map-caption">MAP IMAGE</span>
-      </div>
-      <div class="access-info">
-        <dl>
-          <dt>事務所名</dt><dd>サンプル税理士事務所</dd>
-          <dt>所在地</dt><dd>東京都〇〇区〇〇 サンプルビル0F</dd>
-          <dt>最寄駅</dt><dd>〇〇線 〇〇駅 徒歩0分</dd>
-          <dt>営業時間</dt><dd>平日 9:00〜18:00（土日祝休）</dd>
-          <dt>電話</dt><dd>00-0000-0000</dd>
-          <dt>メール</dt><dd>sample@example.com</dd>
-        </dl>
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section class="contact" id="contact">
-  <div class="container">
-    <div class="section-head">
-      <span class="en">CONTACT</span>
-      <h2>初回相談 無料</h2>
+  <footer>
+    <div class="wrap">
+      <div class="fn">みらい税理士事務所</div>
+      <div>〒100-0005 東京都千代田区丸の内1-1-1 サンプルビル5F ／ TEL 03-1234-5678</div>
+      <div>営業時間：平日 9:00〜18:00（土日祝休・事前予約で時間外対応可）</div>
+      <p class="note">※ 本ページは「医院LP研究所」が制作した税理士事務所向けの提案サンプル（制作例）です。「みらい税理士事務所」は架空の事務所で、実在しません。実際の事務所の強み・実績に基づいて個別に制作いたします。<br>制作・お問い合わせ：医院LP研究所（iinlp.lab@gmail.com）</p>
     </div>
-    <p class="contact-lead">
-      まずはお気軽にお問い合わせください。<br>
-      事務所の状況・ご要望をお伺いした上で、最適なプランをご提案いたします。
-    </p>
-    <a href="mailto:sample@example.com" class="contact-cta">無料相談を申し込む →</a>
-    <div class="contact-info">
-      お電話でも承ります：00-0000-0000（平日 9:00〜18:00）
-    </div>
-  </div>
-</section>
+  </footer>
 
-<footer>
-  <div class="footer-name">サンプル税理士事務所</div>
-  <div>※本ページは「医院LP研究所」が制作する税理士事務所向けLPの参考サンプルです。</div>
-  <div style="margin-top:12px;font-size:11px">© Sample Tax Office (Demo)</div>
-</footer>
+  <div class="mcta"><a href="tel:0312345678" class="t">📞 電話する</a><a href="#contact" class="r">📅 無料相談</a></div>
 
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <g id="i-doc"><path d="M7 3h7l4 4v14H6V3Z" stroke-linejoin="round"/><path d="M14 3v4h4"/><path d="M9 12h6M9 15h6M9 9h3"/></g>
+    <g id="i-chart"><path d="M3 21h18"/><path d="M6 21V11M11 21V5M16 21v-8M21 21V8" stroke-width="2"/></g>
+    <g id="i-coin"><circle cx="12" cy="12" r="8.5"/><path d="M9 8.5l3 3.5 3-3.5M12 12v5M9.5 13.5h5M9.5 15.5h5"/></g>
+    <g id="i-rocket"><path d="M12 3c3 2.5 4.5 6.5 4.5 10l-4.5 3-4.5-3C7.5 9.5 9 5.5 12 3Z"/><circle cx="12" cy="9.5" r="1.6"/><path d="M8.5 16l-2.5 4M15.5 16l2.5 4"/></g>
+    <g id="i-chat"><path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-4 3v-3H6a2 2 0 0 1-2-2V6Z"/><path d="M8 9h8M8 12h5"/></g>
+    <g id="i-sparkle"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/></g>
+    <g id="i-shield"><path d="M12 3l7 2.5V11c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V5.5L12 3Z"/><path d="m9 11.5 2 2 4-4"/></g>
+    <g id="i-home"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></g>
+    <g id="i-doctor"><circle cx="12" cy="8" r="3.4"/><path d="M5 21a7 7 0 0 1 14 0"/></g>
+    <g id="i-pin"><path d="M12 21s-6-5.2-6-10a6 6 0 0 1 12 0c0 4.8-6 10-6 10Z"/><circle cx="12" cy="11" r="2.2"/></g>
+    <g id="i-phone"><path d="M5 4h3l2 5-2.5 1.5a11 11 0 0 0 5 5L19 18l-1 3a13 13 0 0 1-13-13L5 4Z"/></g>
+  </defs></svg>
+
+  <script>
+    const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.12});
+    document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%4*60)+'ms';io.observe(el)});
+  </script>
 </body>
+
 </html>
