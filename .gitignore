@@ -29,3 +29,8 @@ __pycache__/
 Obsidian Vault/
 サンプルLP/
 営業ツール/
+
+# ビルド元データ・分析出力（公開不要・誤公開防止）
+samples/_data/
+remaining.txt
+summary.txt
