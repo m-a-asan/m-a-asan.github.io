@@ -1,0 +1,2164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星読みの部屋 - 占いアプリ</title>
+<style>
+  :root {
+    --bg1: #0f0c29;
+    --bg2: #302b63;
+    --bg3: #24243e;
+    --gold: #f6d365;
+    --gold2: #fda085;
+    --card: rgba(255, 255, 255, 0.07);
+    --card-border: rgba(255, 255, 255, 0.15);
+    --text: #f0eefc;
+    --text-dim: #b8b2d8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+    background-attachment: fixed;
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  /* 星空 */
+  .stars {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  }
+  .star {
+    position: absolute; background: #fff; border-radius: 50%;
+    animation: twinkle 3s infinite ease-in-out;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
+  }
+  .container {
+    position: relative; z-index: 1;
+    max-width: 640px; margin: 0 auto; padding: 24px 16px 64px;
+  }
+  header { text-align: center; padding: 32px 0 24px; }
+  header h1 {
+    font-size: 2rem; letter-spacing: 0.15em;
+    background: linear-gradient(90deg, var(--gold), var(--gold2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  header p { color: var(--text-dim); margin-top: 8px; font-size: 0.9rem; }
+  .date-badge {
+    display: inline-block; margin-top: 12px; padding: 4px 16px;
+    border: 1px solid var(--card-border); border-radius: 999px;
+    font-size: 0.85rem; color: var(--text-dim);
+  }
+  /* タブ */
+  .tabs {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+    margin: 24px 0;
+  }
+  .tab {
+    padding: 12px 4px; text-align: center; cursor: pointer;
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 12px; font-size: 0.85rem; color: var(--text-dim);
+    transition: all 0.25s; user-select: none;
+  }
+  .tab .icon { display: block; font-size: 1.4rem; margin-bottom: 4px; }
+  .tab:hover { background: rgba(255,255,255,0.12); }
+  .tab.active {
+    background: linear-gradient(135deg, rgba(246,211,101,0.25), rgba(253,160,133,0.25));
+    border-color: var(--gold); color: var(--text);
+  }
+  .panel { display: none; animation: fadeIn 0.4s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 16px; padding: 24px; margin-bottom: 16px;
+    backdrop-filter: blur(6px);
+  }
+  .card h2 { font-size: 1.15rem; margin-bottom: 16px; letter-spacing: 0.08em; }
+  .card h2 span { margin-right: 8px; }
+  /* 星座グリッド */
+  .zodiac-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  }
+  .zodiac-btn {
+    padding: 12px 4px; text-align: center; cursor: pointer;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--card-border);
+    border-radius: 12px; color: var(--text); transition: all 0.2s;
+    font-size: 0.8rem;
+  }
+  .zodiac-btn .z-icon { display: block; font-size: 1.5rem; margin-bottom: 2px; }
+  .zodiac-btn .z-date { display: block; font-size: 0.62rem; color: var(--text-dim); margin-top: 2px; }
+  .zodiac-btn:hover { background: rgba(255,255,255,0.14); transform: translateY(-2px); }
+  .zodiac-btn.selected { border-color: var(--gold); background: rgba(246,211,101,0.18); }
+  /* 結果 */
+  .result { margin-top: 20px; display: none; }
+  .result.show { display: block; animation: fadeIn 0.5s ease; }
+  .rank-display { text-align: center; padding: 16px 0; }
+  .rank-display .big {
+    font-size: 2.2rem; font-weight: bold;
+    background: linear-gradient(90deg, var(--gold), var(--gold2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .stars-row { font-size: 1.4rem; letter-spacing: 4px; margin: 8px 0; }
+  .fortune-text {
+    line-height: 1.9; color: var(--text); margin: 12px 0; font-size: 0.95rem;
+  }
+  .lucky-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px;
+  }
+  .lucky-item {
+    background: rgba(255,255,255,0.06); border-radius: 10px;
+    padding: 12px 8px; text-align: center;
+  }
+  .lucky-item .label { font-size: 0.7rem; color: var(--text-dim); display: block; margin-bottom: 4px; }
+  .lucky-item .value { font-size: 0.9rem; font-weight: bold; }
+  .meter-row { margin: 10px 0; }
+  .meter-row .m-label { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 4px; }
+  .meter { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+  .meter .fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, var(--gold), var(--gold2));
+    width: 0; transition: width 0.8s ease;
+  }
+  /* ボタン */
+  .btn {
+    display: block; width: 100%; padding: 14px; margin-top: 16px;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    border: none; border-radius: 12px; color: #1a1735;
+    font-size: 1rem; font-weight: bold; cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s; letter-spacing: 0.1em;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(246,211,101,0.35); }
+  .btn:active { transform: translateY(0); }
+  .btn:disabled { opacity: 0.5; cursor: default; transform: none; box-shadow: none; }
+  /* おみくじ */
+  .omikuji-box {
+    text-align: center; padding: 24px 0;
+  }
+  .omikuji-tube {
+    font-size: 5rem; display: inline-block; cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .omikuji-tube:hover { transform: rotate(-8deg) scale(1.05); }
+  .omikuji-tube.shaking { animation: shake 0.8s ease; }
+  @keyframes shake {
+    0%, 100% { transform: rotate(0); }
+    20% { transform: rotate(-15deg); }
+    40% { transform: rotate(12deg); }
+    60% { transform: rotate(-10deg); }
+    80% { transform: rotate(8deg); }
+  }
+  .omikuji-result-rank {
+    font-size: 3rem; font-weight: bold; margin: 12px 0;
+  }
+  .omikuji-daikichi { color: #ff6b6b; text-shadow: 0 0 24px rgba(255,107,107,0.6); }
+  .omikuji-kichi { color: var(--gold); }
+  .omikuji-kyo { color: #74b9ff; }
+  /* 入力 */
+  .input-group { margin-bottom: 14px; }
+  .input-group label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 6px; }
+  .input-group input, .input-group select {
+    width: 100%; padding: 12px; border-radius: 10px;
+    border: 1px solid var(--card-border); background: rgba(0,0,0,0.25);
+    color: var(--text); font-size: 1rem; outline: none;
+  }
+  .input-group input:focus, .input-group select:focus { border-color: var(--gold); }
+  .input-group input::placeholder { color: rgba(184,178,216,0.5); }
+  /* 相性 */
+  .compat-score {
+    text-align: center; padding: 8px 0;
+  }
+  .compat-score .pct {
+    font-size: 3.4rem; font-weight: bold;
+    background: linear-gradient(90deg, #ff9a9e, #fecfef);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .compat-names { text-align: center; color: var(--text-dim); font-size: 0.9rem; margin-bottom: 8px; }
+  .heart-row { text-align: center; font-size: 1.3rem; letter-spacing: 4px; margin: 8px 0; }
+  /* 数秘術 */
+  .numerology-num {
+    text-align: center; font-size: 4rem; font-weight: bold;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding: 8px 0;
+  }
+  .numerology-title { text-align: center; font-size: 1.2rem; font-weight: bold; margin-bottom: 12px; }
+  /* タロット */
+  .tarot-spread {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px;
+  }
+  .tarot-slot { text-align: center; }
+  .tarot-slot .slot-label { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 6px; }
+  .tarot-card {
+    position: relative; width: 100%; aspect-ratio: 2 / 3.2;
+    perspective: 800px; cursor: default;
+  }
+  .tarot-card .card-inner {
+    position: absolute; inset: 0; transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+  }
+  .tarot-card.flipped .card-inner { transform: rotateY(180deg); }
+  .tarot-face {
+    position: absolute; inset: 0; backface-visibility: hidden;
+    border-radius: 12px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 8px;
+  }
+  .tarot-back {
+    background: linear-gradient(135deg, #2a2550, #4a3f8f);
+    border: 1px solid var(--gold);
+    font-size: 2rem;
+  }
+  .tarot-front {
+    background: linear-gradient(160deg, rgba(246,211,101,0.18), rgba(48,43,99,0.9));
+    border: 1px solid var(--gold);
+    transform: rotateY(180deg);
+  }
+  .tarot-front .t-icon { font-size: 2.2rem; }
+  .tarot-front .t-icon.reversed { transform: rotate(180deg); }
+  .tarot-front .t-num { font-size: 0.65rem; color: var(--text-dim); margin-top: 4px; }
+  .tarot-front .t-name { font-size: 0.82rem; font-weight: bold; margin-top: 2px; text-align: center; }
+  .tarot-front .t-pos { font-size: 0.68rem; margin-top: 4px; padding: 2px 8px; border-radius: 999px; }
+  .tarot-front .t-pos.up { background: rgba(246,211,101,0.25); color: var(--gold); }
+  .tarot-front .t-pos.rev { background: rgba(116,185,255,0.2); color: #74b9ff; }
+  .tarot-reading { margin-top: 18px; }
+  .tarot-reading .t-block {
+    background: rgba(255,255,255,0.05); border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 10px;
+  }
+  .tarot-reading .t-block .t-head {
+    font-size: 0.8rem; color: var(--gold); margin-bottom: 4px; font-weight: bold;
+  }
+  /* 四柱推命 */
+  .pillar-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 16px 0;
+  }
+  .pillar {
+    background: rgba(255,255,255,0.06); border: 1px solid var(--card-border);
+    border-radius: 12px; padding: 14px 6px; text-align: center;
+  }
+  .pillar .p-label { font-size: 0.72rem; color: var(--text-dim); margin-bottom: 6px; }
+  .pillar .p-kanji {
+    font-size: 1.7rem; font-weight: bold; letter-spacing: 0.1em;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .pillar .p-yomi { font-size: 0.68rem; color: var(--text-dim); margin-top: 4px; }
+  .gogyo-badge {
+    display: inline-block; padding: 3px 12px; border-radius: 999px;
+    font-size: 0.8rem; margin: 4px 4px 4px 0; border: 1px solid var(--card-border);
+    background: rgba(255,255,255,0.06);
+  }
+  /* 九星気学 */
+  .kyusei-main {
+    text-align: center; padding: 12px 0;
+  }
+  .kyusei-main .k-name {
+    font-size: 1.8rem; font-weight: bold; letter-spacing: 0.12em;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .kyusei-sub {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0;
+  }
+  /* 月齢 */
+  .moon-display { text-align: center; padding: 12px 0; }
+  .moon-display .moon-emoji { font-size: 4.5rem; display: block; }
+  .moon-display .moon-name {
+    font-size: 1.5rem; font-weight: bold; margin-top: 8px; letter-spacing: 0.1em;
+    background: linear-gradient(135deg, #cfd9ff, #f6d365);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .moon-display .moon-age { color: var(--text-dim); font-size: 0.85rem; margin-top: 6px; }
+  .note {
+    color: var(--text-dim); font-size: 0.72rem; line-height: 1.7; margin-top: 14px;
+  }
+  /* マヤ暦 */
+  .kin-display { text-align: center; padding: 12px 0; }
+  .kin-display .kin-num {
+    font-size: 3rem; font-weight: bold;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .kin-display .kin-seal { font-size: 1.4rem; font-weight: bold; margin-top: 4px; letter-spacing: 0.08em; }
+  .kin-display .kin-tone { color: var(--text-dim); font-size: 0.9rem; margin-top: 4px; }
+  .seal-red { color: #ff8a8a; }
+  .seal-white { color: #f0eefc; }
+  .seal-blue { color: #8ec5ff; }
+  .seal-yellow { color: #f6d365; }
+  /* ルーン */
+  .rune-spread { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; }
+  .rune-stone {
+    background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.16), rgba(30,26,60,0.9));
+    border: 1px solid var(--card-border); border-radius: 42% 58% 55% 45% / 50% 45% 55% 50%;
+    aspect-ratio: 1 / 1.1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 4px;
+    animation: fadeIn 0.6s ease both;
+  }
+  .rune-stone .rune-glyph {
+    font-size: 2.6rem; line-height: 1;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .rune-stone .rune-glyph.reversed { transform: rotate(180deg); }
+  .rune-stone .rune-name { font-size: 0.78rem; font-weight: bold; }
+  .rune-stone .rune-slot { font-size: 0.65rem; color: var(--text-dim); }
+  /* 易経 */
+  .hexagram { width: 150px; margin: 16px auto; }
+  .hex-line { display: flex; gap: 10px; margin: 7px 0; align-items: center; position: relative; }
+  .hex-bar {
+    height: 10px; border-radius: 3px; flex: 1;
+    background: linear-gradient(90deg, var(--gold), var(--gold2));
+  }
+  .hex-line.changing .hex-bar {
+    box-shadow: 0 0 10px rgba(246,211,101,0.8);
+  }
+  .hex-line .hex-mark {
+    position: absolute; right: -34px; font-size: 0.65rem; color: var(--gold2);
+    border: 1px solid var(--gold2); border-radius: 999px; padding: 0 5px;
+  }
+  .hex-name {
+    text-align: center; font-size: 1.5rem; font-weight: bold; letter-spacing: 0.1em;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hex-yomi { text-align: center; color: var(--text-dim); font-size: 0.8rem; margin-top: 2px; }
+  /* インド占星術・ケルト */
+  .vedic-main, .celtic-main { text-align: center; padding: 10px 0; }
+  .vedic-main .v-name, .celtic-main .c-name {
+    font-size: 1.5rem; font-weight: bold; letter-spacing: 0.08em;
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .celtic-main .c-emoji { font-size: 3.4rem; display: block; margin-bottom: 4px; }
+  @media (max-width: 480px) {
+    .tabs { grid-template-columns: repeat(4, 1fr); }
+  }
+  footer {
+    text-align: center; color: var(--text-dim); font-size: 0.75rem;
+    margin-top: 32px; line-height: 1.8;
+  }
+  @media (max-width: 480px) {
+    .tabs { grid-template-columns: repeat(4, 1fr); }
+    .tab { font-size: 0.72rem; padding: 10px 2px; }
+    .zodiac-grid { grid-template-columns: repeat(3, 1fr); }
+    header h1 { font-size: 1.6rem; }
+  }
+</style>
+</head>
+<body>
+<div class="stars" id="starfield"></div>
+<div class="container">
+  <header>
+    <h1>✨ 星読みの部屋 ✨</h1>
+    <p>今日のあなたの運命を、星に聞いてみましょう</p>
+    <span class="date-badge" id="todayBadge"></span>
+  </header>
+
+  <nav class="tabs">
+    <div class="tab active" data-panel="horoscope"><span class="icon">🌟</span>星座占い</div>
+    <div class="tab" data-panel="tarot"><span class="icon">🎴</span>タロット</div>
+    <div class="tab" data-panel="shichu"><span class="icon">🀄</span>四柱推命</div>
+    <div class="tab" data-panel="kyusei"><span class="icon">🧭</span>九星気学</div>
+    <div class="tab" data-panel="numerology"><span class="icon">🔢</span>数秘術</div>
+    <div class="tab" data-panel="moon"><span class="icon">🌙</span>月齢</div>
+    <div class="tab" data-panel="omikuji"><span class="icon">⛩️</span>おみくじ</div>
+    <div class="tab" data-panel="compat"><span class="icon">💞</span>相性占い</div>
+    <div class="tab" data-panel="maya"><span class="icon">🗿</span>マヤ暦</div>
+    <div class="tab" data-panel="rune"><span class="icon">ᚱ</span>ルーン</div>
+    <div class="tab" data-panel="iching"><span class="icon">☯️</span>易経</div>
+    <div class="tab" data-panel="vedic"><span class="icon">🕉️</span>インド</div>
+    <div class="tab" data-panel="celtic"><span class="icon">🌳</span>ケルト</div>
+  </nav>
+
+  <!-- 星座占い -->
+  <section class="panel active" id="panel-horoscope">
+    <div class="card">
+      <h2><span>🌟</span>12星座占い（今日・今月・今年・生涯）</h2>
+      <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 14px;">あなたの星座を選んでください</p>
+      <div class="zodiac-grid" id="zodiacGrid"></div>
+      <div class="result" id="horoscopeResult"></div>
+    </div>
+  </section>
+
+  <!-- おみくじ -->
+  <section class="panel" id="panel-omikuji">
+    <div class="card">
+      <h2><span>⛩️</span>今日のおみくじ</h2>
+      <div class="omikuji-box">
+        <div class="omikuji-tube" id="omikujiTube">🎋</div>
+        <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 8px;">筒をタップして、おみくじを引きましょう</p>
+      </div>
+      <div class="result" id="omikujiResult"></div>
+    </div>
+  </section>
+
+  <!-- 数秘術 -->
+  <section class="panel" id="panel-numerology">
+    <div class="card">
+      <h2><span>🔢</span>数秘術（誕生数占い）</h2>
+      <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 14px;">生年月日からあなたの「運命数」を導き、生まれ持った性質を占います</p>
+      <div class="input-group">
+        <label for="birthdate">生年月日</label>
+        <input type="date" id="birthdate" max="2026-12-31" min="1920-01-01">
+      </div>
+      <button class="btn" id="numerologyBtn">運命数を占う</button>
+      <div class="result" id="numerologyResult"></div>
+    </div>
+  </section>
+
+  <!-- タロット -->
+  <section class="panel" id="panel-tarot">
+    <div class="card">
+      <h2><span>🎴</span>タロット占い（3枚引き）</h2>
+      <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 4px;">
+        大アルカナ22枚から「過去・現在・未来」を読み解くスリーカード・スプレッド。
+        心の中で占いたいことを思い浮かべて、カードを引いてください。
+      </p>
+      <div class="tarot-spread" id="tarotSpread">
+        <div class="tarot-slot">
+          <div class="slot-label">過去</div>
+          <div class="tarot-card" data-slot="0"><div class="card-inner">
+            <div class="tarot-face tarot-back">🌙</div>
+            <div class="tarot-face tarot-front"></div>
+          </div></div>
+        </div>
+        <div class="tarot-slot">
+          <div class="slot-label">現在</div>
+          <div class="tarot-card" data-slot="1"><div class="card-inner">
+            <div class="tarot-face tarot-back">☀️</div>
+            <div class="tarot-face tarot-front"></div>
+          </div></div>
+        </div>
+        <div class="tarot-slot">
+          <div class="slot-label">未来</div>
+          <div class="tarot-card" data-slot="2"><div class="card-inner">
+            <div class="tarot-face tarot-back">⭐</div>
+            <div class="tarot-face tarot-front"></div>
+          </div></div>
+        </div>
+      </div>
+      <button class="btn" id="tarotBtn">カードを引く</button>
+      <div class="tarot-reading" id="tarotReading"></div>
+    </div>
+  </section>
+
+  <!-- 四柱推命 -->
+  <section class="panel" id="panel-shichu">
+    <div class="card">
+      <h2><span>🀄</span>四柱推命（命式）</h2>
+      <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 14px;">
+        生年月日を干支暦（十干十二支）に変換して命式を立てます。
+        あなたの本質を表す「日干（にっかん）」を中心に読み解きます。
+      </p>
+      <div class="input-group">
+        <label for="shichuDate">生年月日</label>
+        <input type="date" id="shichuDate" max="2026-12-31" min="1920-01-01">
+      </div>
+      <button class="btn" id="shichuBtn">命式を立てる</button>
+      <div class="result" id="shichuResult"></div>
+    </div>
+  </section>
+
+  <!-- 九星気学 -->
+  <section class="panel" id="panel-kyusei">
+    <div class="card">
+      <h2><span>🧭</span>九星気学</h2>
+      <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 14px;">
+        生まれ年から「本命星」、生まれ月から「月命星」を割り出します。
+        本命星はあなたの本質・運勢の軸、月命星は内面や若い頃の気質を表します。
+      </p>
+      <div class="input-group">
+        <label for="kyuseiDate">生年月日</label>
+        <input type="date" id="kyuseiDate" max="2026-12-31" min="1920-01-01">
+      </div>
+      <button class="btn" id="kyuseiBtn">九星を調べる</button>
+      <div class="result" id="kyuseiResult"></div>
+    </div>
+  </section>
+
+  <!-- 月齢 -->
+  <section class="panel" id="panel-moon">
+    <div class="card">
+      <h2><span>🌙</span>今日の月齢と月のメッセージ</h2>
+      <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 4px;">
+        朔望月（29.53日周期）に基づいて今日の月齢を計算します。
+        月の満ち欠けは、行動のタイミングを知る古来からの羅針盤です。
+      </p>
+      <div class="result show" id="moonResult"></div>
+    </div>
+  </section>
+
+  <!-- マヤ暦 -->
+  <section class="panel" id="panel-maya">
+    <div class="card">
+      <h2><span>🗿</span>マヤ暦（ツォルキン）占い</h2>
+      <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 14px;">
+        古代マヤの神聖暦ツォルキン（260日周期）から、あなたの「KIN」を算出します。
+        KINは「太陽の紋章（20種）×銀河の音（13種）」の組み合わせで、生まれ持った役割と才能を表します。
+      </p>
+      <div class="input-group">
+        <label for="mayaDate">生年月日</label>
+        <input type="date" id="mayaDate" max="2026-12-31" min="1920-01-01">
+      </div>
+      <button class="btn" id="mayaBtn">KINを調べる</button>
+      <div class="result" id="mayaResult"></div>
+    </div>
+  </section>
+
+  <!-- ルーン -->
+  <section class="panel" id="panel-rune">
+    <div class="card">
+      <h2><span>ᚱ</span>ルーン占い（3石引き）</h2>
+      <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 14px;">
+        北欧に伝わるエルダー・フサルク24文字のルーン文字で占います。
+        袋から3つの石を取り出し「現状・課題・結果」を読み解く伝統的なスプレッドです。
+        占いたいことを思い浮かべて、石を引いてください。
+      </p>
+      <button class="btn" id="runeBtn">ルーンを引く</button>
+      <div class="result" id="runeResult"></div>
+    </div>
+  </section>
+
+  <!-- 易経 -->
+  <section class="panel" id="panel-iching">
+    <div class="card">
+      <h2><span>☯️</span>易経（周易）</h2>
+      <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 14px;">
+        三千年の歴史を持つ中国の易占です。コイン3枚を6回投げて六十四卦を立てる「擲銭法（てきせんほう）」を再現。
+        変爻（へんこう）が出た場合は、状況の変化を示す「之卦（しか）」も読み解きます。
+        問いを心に浮かべて、筮を立ててください。
+      </p>
+      <button class="btn" id="ichingBtn">筮を立てる（コインを6回投げる）</button>
+      <div class="result" id="ichingResult"></div>
+    </div>
+  </section>
+
+  <!-- インド占星術 -->
+  <section class="panel" id="panel-vedic">
+    <div class="card">
+      <h2><span>🕉️</span>インド占星術（ナクシャトラ）</h2>
+      <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 14px;">
+        インド占星術（ジョーティシュ）では、生まれた瞬間に月が位置していた星宿「ナクシャトラ」（27宿）が
+        その人の本質を表すとされます。月の位置を天文計算して、あなたのナクシャトラを求めます。
+      </p>
+      <div class="input-group">
+        <label for="vedicDate">生年月日</label>
+        <input type="date" id="vedicDate" max="2026-12-31" min="1920-01-01">
+      </div>
+      <button class="btn" id="vedicBtn">ナクシャトラを調べる</button>
+      <div class="result" id="vedicResult"></div>
+    </div>
+  </section>
+
+  <!-- ケルト樹木占い -->
+  <section class="panel" id="panel-celtic">
+    <div class="card">
+      <h2><span>🌳</span>ケルト樹木占い</h2>
+      <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 14px;">
+        ケルトの樹木暦（バウムクライス）に基づく占いです。誕生日ごとに「守護樹」が定められており、
+        春分のオーク、夏至のカバノキ、秋分のオリーブ、冬至のブナの4聖樹を含む21種の木があなたの性質を表します。
+      </p>
+      <div class="input-group">
+        <label for="celticDate">生年月日（月日だけで決まります）</label>
+        <input type="date" id="celticDate" max="2026-12-31" min="1920-01-01">
+      </div>
+      <button class="btn" id="celticBtn">守護樹を調べる</button>
+      <div class="result" id="celticResult"></div>
+    </div>
+  </section>
+
+  <!-- 相性占い -->
+  <section class="panel" id="panel-compat">
+    <div class="card">
+      <h2><span>💞</span>相性占い</h2>
+      <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 14px;">ふたりの名前から相性を占います</p>
+      <div class="input-group">
+        <label for="name1">あなたの名前</label>
+        <input type="text" id="name1" placeholder="例：さくら">
+      </div>
+      <div class="input-group">
+        <label for="name2">相手の名前</label>
+        <input type="text" id="name2" placeholder="例：たろう">
+      </div>
+      <button class="btn" id="compatBtn">相性を占う</button>
+      <div class="result" id="compatResult"></div>
+    </div>
+  </section>
+
+  <footer>
+    ※ この占いはエンターテインメントです。<br>
+    星座占い・相性占い・月齢・「今日/今年/今月の運勢」は日付とともに変わります。<br>
+    タロット・おみくじ・ルーン・易経は引くたびに変わります。<br>
+    命式・九星・運命数・KIN・ナクシャトラ・守護樹は生涯変わらないあなたの本質です。<br>
+    今日も良い一日を 🌙
+  </footer>
+</div>
+
+<script>
+/* ---------- ユーティリティ ---------- */
+// 文字列からシード値を作る（同じ入力なら同じ結果になる決定的乱数）
+function hashCode(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
+function seededRandom(seed) {
+  let s = seed % 2147483647;
+  if (s <= 0) s += 2147483646;
+  return function () {
+    s = (s * 16807) % 2147483647;
+    return (s - 1) / 2147483646;
+  };
+}
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+}
+function pick(rand, arr) { return arr[Math.floor(rand() * arr.length)]; }
+
+/* ---------- 星空生成 ---------- */
+(function () {
+  const field = document.getElementById('starfield');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.animationDelay = Math.random() * 3 + 's';
+    s.style.animationDuration = (Math.random() * 2 + 2) + 's';
+    field.appendChild(s);
+  }
+})();
+
+/* ---------- 日付表示 ---------- */
+(function () {
+  const d = new Date();
+  const days = ['日', '月', '火', '水', '木', '金', '土'];
+  document.getElementById('todayBadge').textContent =
+    `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日（${days[d.getDay()]}）の運勢`;
+})();
+
+/* ---------- タブ切替 ---------- */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+  });
+});
+
+/* ---------- 星座占い ---------- */
+const ZODIACS = [
+  { name: 'おひつじ座', icon: '♈', date: '3/21-4/19' },
+  { name: 'おうし座', icon: '♉', date: '4/20-5/20' },
+  { name: 'ふたご座', icon: '♊', date: '5/21-6/21' },
+  { name: 'かに座', icon: '♋', date: '6/22-7/22' },
+  { name: 'しし座', icon: '♌', date: '7/23-8/22' },
+  { name: 'おとめ座', icon: '♍', date: '8/23-9/22' },
+  { name: 'てんびん座', icon: '♎', date: '9/23-10/23' },
+  { name: 'さそり座', icon: '♏', date: '10/24-11/22' },
+  { name: 'いて座', icon: '♐', date: '11/23-12/21' },
+  { name: 'やぎ座', icon: '♑', date: '12/22-1/19' },
+  { name: 'みずがめ座', icon: '♒', date: '1/20-2/18' },
+  { name: 'うお座', icon: '♓', date: '2/19-3/20' },
+];
+
+const FORTUNE_TEXTS = {
+  5: [
+    '最高の一日になる予感。直感が冴えわたり、思い切った行動が幸運を引き寄せます。迷ったら「やる」を選んで正解です。',
+    '星たちがあなたに微笑んでいます。長く温めてきたアイデアを動かすなら今日。周囲の協力も自然と集まります。',
+    '運気は絶好調。偶然の出会いや思いがけない知らせが、未来の扉を開くきっかけになりそうです。',
+  ],
+  4: [
+    '安定した良い流れの一日。丁寧なコミュニケーションを心がけると、信頼がさらに深まります。',
+    '努力が実を結びやすい日。小さな成功体験を積み重ねることで、夕方には大きな手応えを感じられそう。',
+    '人との縁がラッキーの鍵。久しぶりの相手に連絡してみると、嬉しい展開が待っているかもしれません。',
+  ],
+  3: [
+    '穏やかな運気の一日。無理に攻めるより、足元を整えることに時間を使うと吉。夜はゆっくり休んで。',
+    '可もなく不可もなくの日ですが、それは「仕込み」に最適ということ。読書や情報収集が未来の運を育てます。',
+    'ペースを守ることが大切な日。周りに流されず、自分のリズムで過ごせば、静かな満足感を得られます。',
+  ],
+  2: [
+    'やや慎重さが必要な日。うっかりミスに注意して、大事な決断は明日以降に回すのが賢明です。',
+    '思い通りに進まないことがあっても、深呼吸を。今日の停滞は、明日の飛躍のための充電期間です。',
+    '対人面で誤解が生まれやすい日。言葉を選んで丁寧に伝えることで、トラブルは回避できます。',
+  ],
+  1: [
+    '運気は低めですが、心配は不要。今日は守りの日と割り切って、好きな音楽やお茶で心を整えましょう。',
+    '焦りは禁物の一日。予定を詰め込まず、余白を持たせたスケジュールが災いを遠ざけます。',
+    '足踏みの日こそ成長のチャンス。うまくいかない原因を静かに見つめれば、大きな学びが得られます。',
+  ],
+};
+
+const LUCKY_COLORS = ['ゴールド', 'ラベンダー', 'エメラルド', 'コーラルピンク', 'ロイヤルブルー', 'パールホワイト', 'サンセットオレンジ', 'ミントグリーン', 'ワインレッド', 'シルバー'];
+const LUCKY_ITEMS = ['ハンカチ', 'コーヒー', '観葉植物', '腕時計', 'ノート', 'イヤホン', 'キーホルダー', 'マグカップ', '本', 'アロマ', 'ペン', 'お守り'];
+const LUCKY_PLACES = ['カフェ', '公園', '書店', '駅の東口', '水辺', '高い場所', '神社', '図書館', '花屋の前', 'いつもと違う道'];
+const DIRECTIONS8 = ['北', '北東', '東', '東南', '南', '南西', '西', '北西'];
+const DAILY_ADVICE = [
+  '朝一番に窓を開けて深呼吸する', 'デスクや玄関を軽く掃除する', 'いつもより丁寧に挨拶する',
+  '小さな親切をひとつする', '新しい道を通って帰る', '観葉植物や花に触れる',
+  '気になっていた人に連絡する', '5分だけ目を閉じて瞑想する', '「ありがとう」を3回声に出す',
+  '靴を磨く', '白湯を一杯飲んでから動き出す', '寝る前に今日の良かったことを3つ書き出す',
+];
+const CAT_COMMENTS = {
+  love: {
+    high: [
+      '恋愛運は絶好調。素直な気持ちを伝えるだけで、関係がぐっと近づきます。',
+      '魅力が自然とあふれる日。出会いを求める人は、人の集まる場所に顔を出してみて。',
+      'パートナーとの絆が深まる日。小さな「ありがとう」が愛を育てます。',
+    ],
+    mid: [
+      '安定した恋愛運。焦らず相手のペースに合わせることで、信頼が積み重なります。',
+      '聞き役に回ると吉。相手の話に耳を傾けるほど、心の距離が縮まります。',
+      '平穏な一日。特別なことをするより、いつも通りの優しさが一番効きます。',
+    ],
+    low: [
+      '恋愛面では少し空回りしやすい日。距離を詰めすぎず、自分磨きに時間を使って。',
+      '言葉のすれ違いに注意。メッセージは送信前に読み返すひと手間が吉。',
+      '今日は無理に動かないのが正解。心を整えることが次のチャンスにつながります。',
+    ],
+  },
+  work: {
+    high: [
+      '仕事運は最高潮。難しい案件ほど、今日のあなたなら突破できます。',
+      'アイデアが冴える日。思いついた企画はすぐメモして、早めに形にしましょう。',
+      '評価が集まりやすい日。頼まれごとは快く引き受けると、株が上がります。',
+    ],
+    mid: [
+      '堅実にこなせば実りある一日。優先順位をつけて、目の前のひとつずつを丁寧に。',
+      '協力がテーマの日。ひとりで抱えず、早めの相談・共有が成功の鍵です。',
+      '大きな山はない日。ルーティンを整え、明日への段取りをしておくと吉。',
+    ],
+    low: [
+      'ケアレスミスが出やすい日。確認をいつもの2倍丁寧に。',
+      '判断を急がないこと。大事な決定は情報が揃ってからで遅くありません。',
+      '頑張りすぎ注意。今日は6割の力で回し、体力を温存するのが賢明です。',
+    ],
+  },
+  money: {
+    high: [
+      '金運上昇中。臨時収入やお得な情報が舞い込みやすい日です。',
+      '投資した分が返ってくる日。自己投資（本・学び）に使うお金は特に吉。',
+      '買い物勘が冴える日。長く使う物を選ぶなら今日がチャンス。',
+    ],
+    mid: [
+      '金運は安定。予算を決めてから動けば、満足度の高いお金の使い方ができます。',
+      '収支の見直しに向く日。固定費をチェックすると小さな発見がありそう。',
+      '無駄遣いさえ避ければ問題なし。「本当に必要？」のひと呼吸を大切に。',
+    ],
+    low: [
+      '衝動買いに注意。欲しい物はカートに入れて一晩寝かせましょう。',
+      'お金の貸し借りは避けたい日。曖昧な割り勘も後々の火種になりがち。',
+      '出費がかさみやすい日。今日は財布のひもを固く締めるが吉。',
+    ],
+  },
+  health: {
+    high: [
+      '心身ともにエネルギー満タン。体を動かすほど運気も上がります。',
+      '体調は良好。新しい運動や健康習慣を始めるのに最適な日です。',
+      '回復力が高い日。多少の疲れは早めの就寝でリセットできます。',
+    ],
+    mid: [
+      'おおむね好調。こまめな水分補給と休憩で、この調子をキープして。',
+      '肩や目の疲れに注意。1時間に1回、伸びをするだけで違います。',
+      '食事のバランスが運気を左右する日。野菜をもう一品足してみて。',
+    ],
+    low: [
+      '疲れがたまり気味。今日は予定を減らして、回復を最優先に。',
+      '冷えと寝不足に注意。湯船にゆっくり浸かって早めに休みましょう。',
+      '無理は禁物。「休むのも実力のうち」を合言葉に、ペースダウンを。',
+    ],
+  },
+};
+
+// 生まれ持った性質（生涯変わらない星座の本質）
+const ZODIAC_NATURE = [
+  '火のエレメント・守護星は火星。生まれながらの開拓者です。思い立ったら即行動のスピードと、失敗を恐れない勇気が最大の武器。何度転んでも立ち上がる、情熱のトップバッターです。',
+  '土のエレメント・守護星は金星。五感に優れた安定の人です。本物を見抜く審美眼と、一度決めたら動じない粘り強さを持ち、ゆっくりでも確実に豊かさを築いていきます。',
+  '風のエレメント・守護星は水星。知性と好奇心の人です。情報収集力と言葉のセンスは12星座随一。二つのことを同時にこなす器用さと、場を明るくする軽やかさが持ち味です。',
+  '水のエレメント・守護星は月。深い愛情と共感の人です。仲間や家族を守る力が強く、心を許した相手にはとことん尽くします。記憶力と直感力も抜群です。',
+  '火のエレメント・守護星は太陽。生まれながらの主役です。存在感と創造力で人を惹きつけ、称賛をエネルギーに変えます。誇り高く、情に厚いリーダーです。',
+  '土のエレメント・守護星は水星。緻密な分析力と奉仕の心の人です。細部に気づく観察眼と完璧を目指す誠実さを持ち、実務能力は12星座トップクラスです。',
+  '風のエレメント・守護星は金星。調和と美の人です。バランス感覚と社交性に優れ、場の空気を美しく整えます。公平さを愛する生まれつきの平和主義者です。',
+  '水のエレメント・守護星は冥王星。深く極める人です。一点集中の集中力と洞察力で物事の本質に到達します。静かな外見の奥に、誰よりも熱い情熱を秘めています。',
+  '火のエレメント・守護星は木星。自由と冒険の人です。楽観性と向上心で常に遠くの目標を目指す、哲学的な知性と行動力を併せ持った旅人です。',
+  '土のエレメント・守護星は土星。努力と実績の人です。長期的な視野でコツコツ登り続け、必ず頂上に到達します。責任感の強さは12星座一です。',
+  '風のエレメント・守護星は天王星。独創と革新の人です。常識にとらわれない自由な発想で時代の一歩先を行く、博愛精神あふれる個性派です。',
+  '水のエレメント・守護星は海王星。想像力と慈愛の人です。豊かな感受性で人の痛みに寄り添い、芸術的な才能にも恵まれた、夢を形にするロマンチストです。',
+];
+// 月運（星1〜5）
+const MONTH_TEXTS = {
+  5: [
+    '運気最高潮の月。大事な挑戦・決断はこの月のうちに動かすと、追い風をフルに受けられます。',
+    '何をやってもうまく回りやすい月。チャンスは迷わず掴んで。この月の出会いは財産になります。',
+  ],
+  4: [
+    '好調な月。積み重ねてきたことが評価される流れです。攻めと丁寧さのバランスで実りが増します。',
+    '安定した上昇運の月。新しい縁が広がりやすいので、誘いにはできるだけ顔を出してみて。',
+  ],
+  3: [
+    '平運の月。大勝負より足場固めが吉。生活リズムを整えることが、来月以降の運気を作ります。',
+    '穏やかな月。現状維持は停滞ではなく充電です。学びや準備に使うと後で効いてきます。',
+  ],
+  2: [
+    'やや注意の月。予定の詰め込みすぎとうっかりミスに気をつけて。ダブルチェックがお守りになります。',
+    '変化に振り回されやすい月。即断を避け、一晩置いてから決めるくらいでちょうど良いバランスです。',
+  ],
+  1: [
+    '守りの月。新規の大きな決断は控えめにし、休息と整理整頓を優先すると難を逃れます。',
+    '運気充電中の月。うまくいかない時こそ種まきどき。焦らず自分のケアを最優先に。',
+  ],
+};
+// 年運（星1〜5）
+const YEAR_TEXTS = {
+  5: [
+    '飛躍の年。長年温めてきた計画を実行に移す絶好期です。この年の挑戦は数年先まであなたを支えます。',
+    '大きな流れがあなたに味方する年。環境の変化や新しい役割は、迷わず受けて吉です。',
+  ],
+  4: [
+    '上昇運の年。努力がきちんと成果につながります。人脈が広がる年でもあるので、交流を大切に。',
+    '安定成長の年。攻めどころと守りどころを見極めれば、着実にステージが上がります。',
+  ],
+  3: [
+    '基盤づくりの年。派手さはないものの、この年の積み重ねが数年後の飛躍の大きさを決めます。',
+    'マイペースが吉の年。周囲と比べず自分のリズムで淡々と。健康管理が運気の要です。',
+  ],
+  2: [
+    '試練から学ぶ年。思い通りにならないことは軌道修正のサイン。柔軟に構えるほど実りが残ります。',
+    '慎重運転の年。大きな投資や勝負は情報をよく集めてから。守りを固めるほど傷は浅く済みます。',
+  ],
+  1: [
+    '充電の年。運気の冬にあたります。学び・健康・身辺整理に充てると、次の春に大きく芽吹きます。',
+    '手放しの年。終わるものに執着せず見送りましょう。空いたスペースに新しい運が入ってきます。',
+  ],
+};
+
+const zodiacGrid = document.getElementById('zodiacGrid');
+ZODIACS.forEach((z, i) => {
+  const btn = document.createElement('div');
+  btn.className = 'zodiac-btn';
+  btn.innerHTML = `<span class="z-icon">${z.icon}</span>${z.name}<span class="z-date">${z.date}</span>`;
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.zodiac-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    showHoroscope(i);
+  });
+  zodiacGrid.appendChild(btn);
+});
+
+function showHoroscope(index) {
+  const z = ZODIACS[index];
+  const rand = seededRandom(hashCode(todayKey() + z.name));
+  const rank = Math.floor(rand() * 5) + 1; // 1〜5
+  const text = pick(rand, FORTUNE_TEXTS[rank]);
+  const love = Math.floor(rand() * 60) + 40 - (5 - rank) * 5;
+  const work = Math.floor(rand() * 60) + 40 - (5 - rank) * 5;
+  const money = Math.floor(rand() * 60) + 40 - (5 - rank) * 5;
+  const health = Math.floor(rand() * 60) + 40 - (5 - rank) * 5;
+  const color = pick(rand, LUCKY_COLORS);
+  const item = pick(rand, LUCKY_ITEMS);
+  const place = pick(rand, LUCKY_PLACES);
+  const luckyNum = Math.floor(rand() * 9) + 1;
+  const direction = pick(rand, DIRECTIONS8);
+  const partner = ZODIACS[(index + 1 + Math.floor(rand() * 11)) % 12];
+  const advice = pick(rand, DAILY_ADVICE);
+  const starsStr = '★'.repeat(rank) + '☆'.repeat(5 - rank);
+  // 月運・年運（月・年が変わるまで結果は固定）
+  const nowD = new Date();
+  const nowY = nowD.getFullYear(), nowM = nowD.getMonth() + 1;
+  const mRand = seededRandom(hashCode(`${nowY}-${nowM}month` + z.name));
+  const mRank = Math.floor(mRand() * 5) + 1;
+  const mText = pick(mRand, MONTH_TEXTS[mRank]);
+  const yRand = seededRandom(hashCode(`${nowY}year` + z.name));
+  const yRank = Math.floor(yRand() * 5) + 1;
+  const yText = pick(yRand, YEAR_TEXTS[yRank]);
+
+  const el = document.getElementById('horoscopeResult');
+  el.innerHTML = `
+    <div class="rank-display">
+      <div style="font-size:2.4rem;">${z.icon}</div>
+      <div class="big">${z.name}の今日の運勢</div>
+      <div class="stars-row" style="color: var(--gold);">${starsStr}</div>
+    </div>
+    <p class="fortune-text">${text}</p>
+    ${catBlock('恋愛運', love, 'love', rand)}
+    ${catBlock('仕事運', work, 'work', rand)}
+    ${catBlock('金運', money, 'money', rand)}
+    ${catBlock('健康運', health, 'health', rand)}
+    <div class="lucky-grid">
+      <div class="lucky-item"><span class="label">ラッキーカラー</span><span class="value">${color}</span></div>
+      <div class="lucky-item"><span class="label">ラッキーアイテム</span><span class="value">${item}</span></div>
+      <div class="lucky-item"><span class="label">ラッキープレイス</span><span class="value">${place}</span></div>
+      <div class="lucky-item"><span class="label">ラッキーナンバー</span><span class="value">${luckyNum}</span></div>
+      <div class="lucky-item"><span class="label">今日の吉方位</span><span class="value">${direction}</span></div>
+      <div class="lucky-item"><span class="label">相性の良い星座</span><span class="value">${partner.icon} ${partner.name}</span></div>
+    </div>
+    <div class="t-block" style="background:rgba(246,211,101,0.08); border-radius:10px; padding:12px 14px; margin-top:14px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">🔑 今日の開運アクション</div>
+      <div style="font-size:0.9rem;">${advice}</div>
+    </div>
+    <div class="t-block" style="background:rgba(255,255,255,0.05); border-radius:10px; padding:12px 14px; margin-top:10px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">🗓️ 今月の運勢（${nowM}月）　<span style="letter-spacing:2px;">${'★'.repeat(mRank)}${'☆'.repeat(5 - mRank)}</span></div>
+      <div style="font-size:0.88rem; line-height:1.7;">${mText}</div>
+    </div>
+    <div class="t-block" style="background:rgba(255,255,255,0.05); border-radius:10px; padding:12px 14px; margin-top:10px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">📅 今年の運勢（${nowY}年）　<span style="letter-spacing:2px;">${'★'.repeat(yRank)}${'☆'.repeat(5 - yRank)}</span></div>
+      <div style="font-size:0.88rem; line-height:1.7;">${yText}</div>
+    </div>
+    <div class="t-block" style="background:rgba(255,255,255,0.05); border-radius:10px; padding:12px 14px; margin-top:10px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">🌌 生まれ持った性質（生涯変わらないあなたの核）</div>
+      <div style="font-size:0.88rem; line-height:1.7;">${ZODIAC_NATURE[index]}</div>
+    </div>
+  `;
+  el.classList.add('show');
+  requestAnimationFrame(() => {
+    el.querySelectorAll('.fill').forEach(f => { f.style.width = f.dataset.w + '%'; });
+  });
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function meterRow(label, val) {
+  val = Math.max(5, Math.min(100, val));
+  return `
+    <div class="meter-row">
+      <div class="m-label"><span>${label}</span><span>${val}%</span></div>
+      <div class="meter"><div class="fill" data-w="${val}"></div></div>
+    </div>`;
+}
+
+// 結果内のメーターを伸ばすアニメーション
+function animateFills(root) {
+  requestAnimationFrame(() => {
+    root.querySelectorAll('.fill').forEach(f => { f.style.width = f.dataset.w + '%'; });
+  });
+}
+
+// メーター＋分野別コメント
+function catBlock(label, val, key, rand) {
+  val = Math.max(5, Math.min(100, val));
+  const level = val >= 75 ? 'high' : val >= 50 ? 'mid' : 'low';
+  const comment = pick(rand, CAT_COMMENTS[key][level]);
+  return meterRow(label, val) +
+    `<p style="font-size:0.85rem; margin:2px 0 14px; line-height:1.7;">${comment}</p>`;
+}
+
+/* ---------- おみくじ ---------- */
+const OMIKUJI = [
+  { rank: '大吉', cls: 'omikuji-daikichi', weight: 12, msg: '素晴らしい運気です。願いごとは叶い、待ち人は現れ、失せ物は見つかるでしょう。感謝の心を忘れずに過ごせば、幸運はさらに大きくなります。' },
+  { rank: '中吉', cls: 'omikuji-kichi', weight: 18, msg: '良い運気に恵まれています。焦らず着実に進めば、望みは時間とともに叶います。人への親切が幸運の呼び水になります。' },
+  { rank: '小吉', cls: 'omikuji-kichi', weight: 22, msg: '小さな幸せが積み重なる運気。日々の暮らしを丁寧に送ることで、じわじわと運が開けていきます。',},
+  { rank: '吉', cls: 'omikuji-kichi', weight: 24, msg: '穏やかで安定した運気です。大きな変化はありませんが、それこそが平和の証。現状に感謝すると運気が上向きます。' },
+  { rank: '末吉', cls: 'omikuji-kichi', weight: 14, msg: 'これから運が開けていく兆し。今は種まきの時期です。学びと準備に時間を使えば、やがて花が咲きます。' },
+  { rank: '凶', cls: 'omikuji-kyo', weight: 8, msg: '運気は低めですが、凶は「用心せよ」という星からのメッセージ。慎重に過ごせば災いは避けられ、明日からの運気は上向きます。' },
+  { rank: '大凶', cls: 'omikuji-kyo', weight: 2, msg: '大凶は最も運が上がりやすい状態とも言われます。これ以上悪くならないのだから、あとは登るだけ。今日を耐えれば、大きな幸運が待っています。' },
+];
+
+// 運勢の等級（0=大吉級 → 3=凶級）ごとの項目別お告げ
+const OMIKUJI_GRADE = { '大吉': 0, '中吉': 1, '小吉': 1, '吉': 1, '末吉': 2, '凶': 3, '大凶': 3 };
+const OMIKUJI_ITEMS = {
+  '願望（ねがいごと）': ['思いのままに叶う', '努力すれば叶う', '時を待てば叶う', '騒がねば障りなし'],
+  '待人（まちびと）': ['来る、良き便りあり', '来る、少し遅れる', '便りありて来ず', '来ず、望み薄し'],
+  '失物（うせもの）': ['すぐに出る', '出る、高い所を探せ', '出にくい、水辺を探せ', '出がたし、諦めも肝心'],
+  '学問（がくもん）': ['安心して励め、実り大', '努力すれば必ず実る', '困難多し、基礎を固めよ', '雑念を捨てて机に向かえ'],
+  '商売（あきない）': ['大いに利あり', '利あり、されど欲張るな', '損なし、控えめが吉', '新規は見合わせるが吉'],
+  '恋愛（れんあい）': ['この人を逃すべからず', '進んで吉、誠意を持て', '焦らず時を待て', '今は動かず己を磨け'],
+};
+
+const omikujiTube = document.getElementById('omikujiTube');
+let omikujiBusy = false;
+omikujiTube.addEventListener('click', () => {
+  if (omikujiBusy) return;
+  omikujiBusy = true;
+  omikujiTube.classList.add('shaking');
+  const resultEl = document.getElementById('omikujiResult');
+  resultEl.classList.remove('show');
+  setTimeout(() => {
+    omikujiTube.classList.remove('shaking');
+    // 重み付き抽選
+    const total = OMIKUJI.reduce((a, o) => a + o.weight, 0);
+    let r = Math.random() * total;
+    let chosen = OMIKUJI[0];
+    for (const o of OMIKUJI) {
+      r -= o.weight;
+      if (r <= 0) { chosen = o; break; }
+    }
+    const g = OMIKUJI_GRADE[chosen.rank];
+    const itemsHtml = Object.entries(OMIKUJI_ITEMS).map(([k, arr]) =>
+      `<div class="lucky-item" style="padding:12px 10px;"><span class="label">${k}</span><span class="value" style="font-size:0.82rem;">${arr[g]}</span></div>`
+    ).join('');
+    resultEl.innerHTML = `
+      <div style="text-align:center;">
+        <div class="omikuji-result-rank ${chosen.cls}">${chosen.rank}</div>
+        <p class="fortune-text" style="text-align:left;">${chosen.msg}</p>
+        <div class="lucky-grid" style="grid-template-columns:repeat(2,1fr);">${itemsHtml}</div>
+        <p style="color: var(--text-dim); font-size: 0.8rem; margin-top: 12px;">もう一度引くこともできます（結果は引き直すたびに変わります）</p>
+      </div>`;
+    resultEl.classList.add('show');
+    resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    omikujiBusy = false;
+  }, 900);
+});
+
+/* ---------- 数秘術 ---------- */
+const NUMEROLOGY = {
+  1: { title: 'リーダーの星', text: 'あなたは開拓者。自分の道を切り拓く力と、人を引っ張るカリスマ性を持っています。「まずやってみる」の精神があなたの最大の武器。独立心が強く、新しいことを始めるほど運が磨かれます。' },
+  2: { title: '調和の星', text: 'あなたは優れた協調性と繊細な感受性の持ち主。人の気持ちを察する力に長け、チームの潤滑油として欠かせない存在です。誰かを支えるとき、あなたの魅力は最も輝きます。' },
+  3: { title: '創造の星', text: 'あなたは生まれながらのエンターテイナー。豊かな表現力とユーモアで、周囲を明るく照らします。楽しむことが才能を伸ばす鍵。好奇心の赴くままに動くと運が開けます。' },
+  4: { title: '安定の星', text: 'あなたは誠実で努力家。コツコツと積み上げる力は12,000人にひとりの逸材級です。信頼という最強の財産を築けるタイプ。土台づくりを大切にすれば、大きな成功が待っています。' },
+  5: { title: '自由の星', text: 'あなたは変化と冒険を愛する自由人。行動力と適応力に優れ、どんな環境でも輝けます。ひとつの場所に縛られないことがあなたらしさ。旅と出会いが運気を上げます。' },
+  6: { title: '愛の星', text: 'あなたは深い愛情と責任感の持ち主。家族や仲間を守る力に長け、周囲から自然と頼られます。与える愛が巡り巡って、あなたに大きな幸せを運んできます。' },
+  7: { title: '探求の星', text: 'あなたは知性と洞察力の人。物事の本質を見抜く力があり、専門性を磨くほど輝きます。ひとりの時間があなたの力の源泉。深く学び、深く考えることが開運の鍵です。' },
+  8: { title: '成功の星', text: 'あなたはパワフルな実現者。目標に向かって突き進むエネルギーと、豊かさを引き寄せる力を持っています。大きな夢を掲げるほど、大きな成果を手にできるタイプです。' },
+  9: { title: '博愛の星', text: 'あなたは広い視野と深い共感力の持ち主。境界を越えて人とつながる力があり、多くの人に影響を与える運命です。誰かの役に立つとき、あなたの運気は最高潮に達します。' },
+  11: { title: '直感の星（マスターナンバー）', text: 'あなたは特別な感性を持つメッセンジャー。鋭い直感とインスピレーションで、人々を導く役割を担っています。感じたことを信じて行動すれば、道は自然と開けます。' },
+  22: { title: '大器の星（マスターナンバー）', text: 'あなたは壮大なビジョンを現実にする力を持つ、稀有な存在。理想を絵に描いた餅で終わらせない実行力が備わっています。スケールの大きな挑戦こそ、あなたの本領です。' },
+  33: { title: '無償の愛の星（マスターナンバー）', text: 'あなたは最も稀少な運命数の持ち主。見返りを求めない愛と癒しの力で、周囲の人々の心を照らします。あなたがそこにいるだけで、救われる人がいます。' },
+};
+
+const NUMEROLOGY_DETAIL = {
+  1: { love: '恋もリードしたいタイプ。素直に「好き」と言える潔さが最大の魅力です。', work: '起業家・リーダー・企画職など、道を切り拓く役割で輝きます。', point: '人に頼ることを覚えると、運の器がさらに大きくなります。' },
+  2: { love: '尽くす愛の人。相手を思いやる細やかさで、深い信頼関係を築けます。', work: 'サポート職・調整役・カウンセラーなど、人と人の間で輝きます。', point: 'NOと言う勇気を持つと、優しさがすり減らずに済みます。' },
+  3: { love: '恋を楽しむ天才。一緒にいて笑える人と結ばれると、魅力が倍増します。', work: 'クリエイティブ職・エンタメ・広報など、表現の場で輝きます。', point: '飽きっぽさは好奇心の裏返し。楽しみながら続ける工夫を。' },
+  4: { love: '誠実で一途な愛の人。時間をかけて信頼を育てる恋が向いています。', work: '管理・経理・技術職など、正確さと継続力が活きる仕事で輝きます。', point: 'たまには計画を手放す小さな冒険が、新しい扉を開きます。' },
+  5: { love: '刺激を求める恋多き人。束縛しない相手との自由な関係が長続きの秘訣。', work: '営業・旅行・メディアなど、変化と移動のある仕事で輝きます。', point: 'ひとつだけ「変えない軸」を持つと、自由がより活きます。' },
+  6: { love: '家庭的で深い愛情の人。守り守られる温かな関係を築けます。', work: '教育・医療・美容など、人を育て癒す仕事で輝きます。', point: '自分を後回しにしがち。セルフケアも愛の一部です。' },
+  7: { love: '精神的なつながりを重視。価値観を語り合える相手と深く結ばれます。', work: '研究・専門職・分析など、深く極める仕事で輝きます。', point: '心を開ける相手をひとり持つだけで、世界の見え方が変わります。' },
+  8: { love: '情熱的で豪快な愛の人。尊敬し合えるパートナーと大きな夢を描けます。', work: '経営・金融・不動産など、大きなお金と組織を動かす仕事で輝きます。', point: '勝ち負け以外の物差しを持つと、豊かさが安定します。' },
+  9: { love: '包容力のある愛の人。相手の背景ごと受け入れる懐の深さが魅力です。', work: '国際関係・福祉・芸術など、境界を越える仕事で輝きます。', point: '理想と現実の橋渡しを焦らないこと。熟成があなたの味方です。' },
+  11: { love: '運命を感じる恋をする人。直感で選んだ相手はたいてい正解です。', work: '企画・執筆・カウンセリングなど、ひらめきを活かす仕事で輝きます。', point: '感受性の強さは才能。疲れたら電波を切る時間を持って。' },
+  22: { love: '生涯を懸けた大きな愛を築く人。共に夢を追える相手が理想です。', work: '大規模プロジェクト・社会事業など、スケールの大きな舞台で輝きます。', point: '大きな理想は小さな一歩から。今日の一歩を大切に。' },
+  33: { love: '無条件の愛を注ぐ人。あなたの愛には相手の人生を変える力があります。', work: '教育・癒し・奉仕など、人の心を救う仕事で輝きます。', point: '与えるだけでなく受け取る練習を。愛は循環してこそ育ちます。' },
+};
+// 個人年サイクル（9年周期の今年のテーマ）
+const PERSONAL_YEAR = {
+  1: '種まきとスタートの年。新しい挑戦を始めるほど、この先9年の実りが大きくなります。',
+  2: '協力と忍耐の年。すぐに結果を求めず、人との縁と信頼をじっくり育てましょう。',
+  3: '創造と楽しみの年。遊び心が幸運を呼びます。趣味や表現活動が思わぬ道を開きます。',
+  4: '基盤固めの年。コツコツと積み上げたものが、来年以降の飛躍の土台になります。',
+  5: '変化と転機の年。環境の変化は追い風です。流れに乗って柔軟に動きましょう。',
+  6: '愛と責任の年。家族や身近な人との関係がテーマ。愛情を注いだ分だけ絆が深まります。',
+  7: '内省と学びの年。立ち止まって自分を見つめ直すとき。学びへの投資が最も実ります。',
+  8: '収穫と達成の年。これまでの努力が形になります。堂々と成果を受け取りましょう。',
+  9: '完結と手放しの年。9年サイクルの締めくくり。不要なものを手放すほど、来年の新しい波に乗れます。',
+};
+// 個人月サイクル（個人年＋今の月を還元）
+const PERSONAL_MONTH = {
+  1: 'スタートの月。思い立ったことは月の前半に始めると勢いに乗れます。',
+  2: '調整の月。急がば回れ。人との対話と根回しが実を結びます。',
+  3: '楽しむ月。遊びと交流の中から幸運の種が見つかります。',
+  4: '整える月。生活や仕事の土台を固めるのに最適です。',
+  5: '動く月。変化・移動・新しい出会いが吉と出ます。',
+  6: '愛の月。身近な人を大切にすると、心が満たされます。',
+  7: '学ぶ月。ひとりの時間と勉強が最も実る時期です。',
+  8: '実りの月。成果を堂々と受け取り、次の目標を掲げましょう。',
+  9: '仕上げの月。やり残しの整理と手放しが、来月の運を呼び込みます。',
+};
+function reduceDigits(n) {
+  while (n > 9) n = String(n).split('').map(Number).reduce((a, b) => a + b, 0);
+  return n;
+}
+
+document.getElementById('numerologyBtn').addEventListener('click', () => {
+  const v = document.getElementById('birthdate').value;
+  const el = document.getElementById('numerologyResult');
+  if (!v) {
+    el.innerHTML = '<p style="color:#ff9a9e; text-align:center;">生年月日を入力してください</p>';
+    el.classList.add('show');
+    return;
+  }
+  // 全桁を足して1桁（または11,22,33）になるまで還元
+  let digits = v.replace(/-/g, '').split('').map(Number);
+  let num = digits.reduce((a, b) => a + b, 0);
+  while (num > 9 && num !== 11 && num !== 22 && num !== 33) {
+    num = String(num).split('').map(Number).reduce((a, b) => a + b, 0);
+  }
+  const info = NUMEROLOGY[num];
+  const detail = NUMEROLOGY_DETAIL[num];
+  // 個人年：生まれ月＋生まれ日＋今年の西暦を1桁まで還元
+  const [by, bm, bd] = v.split('-').map(Number);
+  const nowYear = new Date().getFullYear();
+  const py = reduceDigits(reduceDigits(bm) + reduceDigits(bd) + reduceDigits(nowYear));
+  el.innerHTML = `
+    <div class="numerology-num">${num}</div>
+    <div class="numerology-title">${info.title}</div>
+    <p class="fortune-text">${info.text}</p>
+    <div class="t-block" style="background:rgba(255,255,255,0.05); border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">💗 恋愛傾向</div>
+      <div style="font-size:0.88rem; line-height:1.7;">${detail.love}</div>
+    </div>
+    <div class="t-block" style="background:rgba(255,255,255,0.05); border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">💼 適職・才能</div>
+      <div style="font-size:0.88rem; line-height:1.7;">${detail.work}</div>
+    </div>
+    <div class="t-block" style="background:rgba(255,255,255,0.05); border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">🌱 成長のヒント</div>
+      <div style="font-size:0.88rem; line-height:1.7;">${detail.point}</div>
+    </div>
+    <div class="t-block" style="background:rgba(246,211,101,0.08); border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">📅 ${nowYear}年のあなた — 個人年「${py}」</div>
+      <div style="font-size:0.88rem; line-height:1.7;">${PERSONAL_YEAR[py]}</div>
+    </div>
+    ${(() => {
+      const nowMonth = new Date().getMonth() + 1;
+      const pm = reduceDigits(py + nowMonth);
+      return `
+    <div class="t-block" style="background:rgba(246,211,101,0.08); border-radius:10px; padding:12px 14px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">🗓️ ${nowMonth}月のあなた — 個人月「${pm}」</div>
+      <div style="font-size:0.88rem; line-height:1.7;">${PERSONAL_MONTH[pm]}</div>
+    </div>`;
+    })()}
+  `;
+  el.classList.add('show');
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+/* ---------- 相性占い ---------- */
+const COMPAT_COMMENTS = [
+  { min: 90, text: '運命的な相性！ふたりは魂のレベルで惹かれ合っています。言葉にしなくても通じ合える、奇跡のような関係を築けるでしょう。' },
+  { min: 75, text: 'とても良い相性です。お互いの長所を引き出し合える理想的な関係。素直な気持ちを伝え合うことで、絆はさらに深まります。' },
+  { min: 60, text: '良い相性です。時にすれ違いもありますが、それはお互いを深く知るためのスパイス。歩み寄る心があれば、長く続く関係になれます。' },
+  { min: 45, text: 'ほどよい距離感が鍵になる相性。違いを「面白い」と思えたとき、ふたりの関係はぐっと良くなります。焦らずゆっくり育てましょう。' },
+  { min: 30, text: '正反対の魅力を持つふたり。ぶつかることもありますが、それは互いにない物を持っている証拠。尊重の気持ちが関係を実らせます。' },
+  { min: 0, text: '刺激的な組み合わせ。簡単な関係ではありませんが、困難を乗り越えたふたりの絆は、誰よりも強くなる可能性を秘めています。' },
+];
+
+const COMPAT_CATS = {
+  '恋愛相性': {
+    high: '恋愛相性は抜群。一緒にいるだけで安心できる、自然体でいられる関係です。',
+    mid: 'ときめきと安心のバランス型。デートに新鮮さを足す工夫で、さらに深まります。',
+    low: '恋のリズムが少し違うふたり。相手のペースを尊重することが愛を育てます。',
+  },
+  '友情相性': {
+    high: '友情相性は最高。何時間話しても飽きない、生涯の親友になれる組み合わせです。',
+    mid: '程よい距離感の良き友。たまに会うたび話が弾む、心地よい関係です。',
+    low: 'タイプの違う友人関係。違いを面白がれれば、他にない刺激をくれる相手です。',
+  },
+  '仕事相性': {
+    high: '仕事の相性は理想的。役割分担が自然と決まり、1+1が3になるコンビです。',
+    mid: '補い合える仕事仲間。報告・連絡をこまめにすれば、堅実な成果を出せます。',
+    low: '仕事の進め方が異なるふたり。先にルールを決めておくと衝突を防げます。',
+  },
+};
+
+document.getElementById('compatBtn').addEventListener('click', () => {
+  const n1 = document.getElementById('name1').value.trim();
+  const n2 = document.getElementById('name2').value.trim();
+  const el = document.getElementById('compatResult');
+  if (!n1 || !n2) {
+    el.innerHTML = '<p style="color:#ff9a9e; text-align:center;">ふたりの名前を入力してください</p>';
+    el.classList.add('show');
+    return;
+  }
+  // 名前の順序に依存しないよう、ソートしてからハッシュ化
+  const key = [n1, n2].sort().join('💞') + todayKey();
+  const rand = seededRandom(hashCode(key));
+  const score = Math.floor(rand() * 71) + 30; // 30〜100
+  const comment = COMPAT_COMMENTS.find(c => score >= c.min).text;
+  const hearts = Math.max(1, Math.round(score / 20));
+  const heartStr = '💗'.repeat(hearts) + '🤍'.repeat(5 - hearts);
+  const catsHtml = Object.entries(COMPAT_CATS).map(([label, texts]) => {
+    const s = Math.floor(rand() * 71) + 30;
+    const band = s >= 80 ? 'high' : s >= 60 ? 'mid' : 'low';
+    return meterRow(label, s) +
+      `<p style="font-size:0.85rem; margin:2px 0 14px; line-height:1.7;">${texts[band]}</p>`;
+  }).join('');
+  el.innerHTML = `
+    <div class="compat-names">${n1} さん × ${n2} さん</div>
+    <div class="compat-score"><span class="pct">${score}%</span></div>
+    <div class="heart-row">${heartStr}</div>
+    <p class="fortune-text">${comment}</p>
+    <div style="margin-top:6px;">${catsHtml}</div>
+    <p style="color: var(--text-dim); font-size: 0.75rem; text-align:center;">※ 相性は日替わりで変化します</p>
+  `;
+  el.classList.add('show');
+  animateFills(el);
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+/* ==================== タロット占い ==================== */
+const TAROT_CARDS = [
+  { n: 0,  name: '愚者',       icon: '🃏', up: '自由・新しい旅立ち・無限の可能性。常識にとらわれない一歩が、想像以上の展開を呼び込みます。', rev: '無計画・軽率さへの警告。勢いだけで動く前に、足元を一度確かめる必要があります。' },
+  { n: 1,  name: '魔術師',     icon: '🎩', up: '創造・才能の開花・物事の始まり。あなたにはすでに必要な道具が揃っています。自信を持って始めましょう。', rev: '迷い・準備不足。今は技術や知識を磨く時期。焦って動くと空回りしやすいときです。' },
+  { n: 2,  name: '女教皇',     icon: '📖', up: '直感・知性・静かな洞察。理屈より先に「感じたこと」が正解を教えてくれます。', rev: '神経質・視野の狭まり。頭で考えすぎて心の声が聞こえなくなっているようです。' },
+  { n: 3,  name: '女帝',       icon: '👑', up: '豊かさ・愛情・実り。育ててきたものが形になるとき。愛情を注いだ分だけ返ってきます。', rev: '過保護・停滞。与えすぎ、抱え込みすぎに注意。手放すことも愛のひとつです。' },
+  { n: 4,  name: '皇帝',       icon: '🏛️', up: '安定・責任・リーダーシップ。主導権を握って進むべきとき。決断力が信頼を生みます。', rev: '傲慢・独断。力で押し切ろうとすると反発を招きます。周囲の声に耳を傾けて。' },
+  { n: 5,  name: '教皇',       icon: '🕊️', up: '慈悲・良き助言・信頼。目上の人や経験者の言葉が、道を照らしてくれます。', rev: '独善・形式へのこだわり。「こうあるべき」を疑ってみると、視界が開けます。' },
+  { n: 6,  name: '恋人',       icon: '💕', up: '愛・調和・喜びある選択。心が惹かれる方を選んで正解。素直な気持ちが幸運の鍵です。', rev: '迷い・誘惑。目先の甘さに流されそうなとき。本当に大切なものを思い出して。' },
+  { n: 7,  name: '戦車',       icon: '🏇', up: '前進・勝利・圧倒的な行動力。迷いを断ち、一気に進めば勝利をつかめます。', rev: '暴走・空回り。アクセルの踏みすぎに注意。コントロールを取り戻すことが先決です。' },
+  { n: 8,  name: '力',         icon: '🦁', up: '強い意志・勇気・忍耐。力ずくではなく、粘り強さと優しさが困難を手なずけます。', rev: '自信の揺らぎ・無理のしすぎ。弱さを認めることが、本当の強さへの入り口です。' },
+  { n: 9,  name: '隠者',       icon: '🏮', up: '内省・探求・成熟した知恵。ひとりの時間が答えを連れてきます。急がず深く考えて。', rev: '孤立・閉じこもり。考えすぎて動けなくなっています。誰かに話すだけで軽くなります。' },
+  { n: 10, name: '運命の輪',   icon: '🎡', up: '転機・チャンス到来・流れの好転。運命の歯車が回り始めました。波に乗り遅れないで。', rev: 'タイミングのずれ・停滞。今は無理に動かすときではありません。次の追い風を待って。' },
+  { n: 11, name: '正義',       icon: '⚖️', up: '公正・バランス・誠実な決着。筋を通した行動が、正当な評価と結果をもたらします。', rev: '不均衡・偏り。どちらかに肩入れしすぎていませんか。天秤を水平に戻しましょう。' },
+  { n: 12, name: '吊るされた男', icon: '🙃', up: '試練の中の学び・視点の転換。今の停滞は無駄ではありません。逆さまから見ると答えが見えます。', rev: '徒労・報われない犠牲。頑張る方向が違うのかもしれません。一度立ち止まる勇気を。' },
+  { n: 13, name: '死神',       icon: '🦋', up: '終わりと再生・変容。ひとつの章が終わり、新しい章が始まります。手放すほど身軽になれます。', rev: '執着・変化への抵抗。終わったものにしがみつくと、新しい芽が育ちません。' },
+  { n: 14, name: '節制',       icon: '🏺', up: '調和・節度・癒し。異なるものを混ぜ合わせ、ちょうどいいバランスを見つけられるときです。', rev: '不摂生・消耗。心身のバランスが崩れ気味。生活のリズムを整えることが開運になります。' },
+  { n: 15, name: '悪魔',       icon: '😈', up: '誘惑・執着・断ち切れない欲望。楽な方に流される鎖に気づくこと。それが自由への第一歩です。', rev: '束縛からの解放・目覚め。悪い習慣や腐れ縁を断ち切る絶好のタイミングです。' },
+  { n: 16, name: '塔',         icon: '🗼', up: '崩壊と再構築・衝撃的な変化。壊れるのは、偽物の土台だけ。本物はこの後に建ちます。', rev: '緊迫・崩壊の予兆。小さな違和感を放置しないで。早めの軌道修正が大難を小難に変えます。' },
+  { n: 17, name: '星',         icon: '⭐', up: '希望・ひらめき・理想への道。願いは正しい方向を向いています。星の光を信じて進んで。', rev: '失望・現実逃避。理想が高すぎて疲れていませんか。小さな一歩に希望は宿ります。' },
+  { n: 18, name: '月',         icon: '🌕', up: '不安・幻想・潜在意識からのメッセージ。曖昧さの中にいますが、夜は必ず明けます。直感を信じて。', rev: '霧が晴れる・真実が明らかに。長く抱えていた不安の正体が、まもなく見えてきます。' },
+  { n: 19, name: '太陽',       icon: '☀️', up: '成功・生命力・祝福。最高のカードです。ありのままのあなたが輝き、努力が報われます。', rev: '一時的な曇り・延期。成功が消えたのではなく、少し遅れているだけ。自信を失わないで。' },
+  { n: 20, name: '審判',       icon: '🎺', up: '復活・再会・決断の時。諦めていたことに再びチャンスが巡ってきます。ラッパの合図を聞き逃さないで。', rev: '後悔・過去への執着。やり直しは可能ですが、同じやり方の繰り返しでは同じ結果になります。' },
+  { n: 21, name: '世界',       icon: '🌏', up: '完成・達成・統合。長い旅がひとつの完成を迎えます。祝福とともに、次のステージへ。', rev: '未完成・あと一歩。ゴール目前で足踏み中。最後のピースは意外と近くにあります。' },
+];
+const TAROT_ROMAN = ['0','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX','XXI'];
+const TAROT_SLOT_LABELS = ['過去', '現在', '未来'];
+const TAROT_SLOT_LEAD = [
+  'これまでのあなた・今の状況の原因',
+  'いま置かれている状況・向き合うべきテーマ',
+  'この先の流れ・星からのアドバイス',
+];
+
+let tarotBusy = false;
+document.getElementById('tarotBtn').addEventListener('click', () => {
+  if (tarotBusy) return;
+  tarotBusy = true;
+  const btn = document.getElementById('tarotBtn');
+  btn.disabled = true;
+  const cards = document.querySelectorAll('.tarot-card');
+  const reading = document.getElementById('tarotReading');
+  reading.innerHTML = '';
+  // いったん裏に戻す
+  cards.forEach(c => c.classList.remove('flipped'));
+
+  // 22枚から重複なしで3枚抽選、各カード50%で逆位置
+  const deck = [...TAROT_CARDS.keys()];
+  const drawn = [];
+  for (let i = 0; i < 3; i++) {
+    const idx = Math.floor(Math.random() * deck.length);
+    drawn.push({ card: TAROT_CARDS[deck.splice(idx, 1)[0]], reversed: Math.random() < 0.5 });
+  }
+
+  setTimeout(() => {
+    drawn.forEach((d, i) => {
+      const front = cards[i].querySelector('.tarot-front');
+      front.innerHTML = `
+        <span class="t-icon ${d.reversed ? 'reversed' : ''}">${d.card.icon}</span>
+        <span class="t-num">${TAROT_ROMAN[d.card.n]}</span>
+        <span class="t-name">${d.card.name}</span>
+        <span class="t-pos ${d.reversed ? 'rev' : 'up'}">${d.reversed ? '逆位置' : '正位置'}</span>`;
+      setTimeout(() => cards[i].classList.add('flipped'), 300 + i * 500);
+    });
+    setTimeout(() => {
+      reading.innerHTML = drawn.map((d, i) => `
+        <div class="t-block">
+          <div class="t-head">【${TAROT_SLOT_LABELS[i]}】${d.card.name}（${d.reversed ? '逆位置' : '正位置'}）— ${TAROT_SLOT_LEAD[i]}</div>
+          <div class="fortune-text" style="margin:0; font-size:0.88rem;">${d.reversed ? d.card.rev : d.card.up}</div>
+        </div>`).join('');
+      btn.textContent = 'もう一度引く';
+      btn.disabled = false;
+      tarotBusy = false;
+      reading.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 300 + 3 * 500 + 400);
+  }, 250);
+});
+
+/* ==================== 干支暦（四柱推命・九星気学の共通基盤） ==================== */
+const STEMS = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+const STEMS_YOMI = ['きのえ', 'きのと', 'ひのえ', 'ひのと', 'つちのえ', 'つちのと', 'かのえ', 'かのと', 'みずのえ', 'みずのと'];
+const BRANCHES = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+const BRANCHES_YOMI = ['ね', 'うし', 'とら', 'う', 'たつ', 'み', 'うま', 'ひつじ', 'さる', 'とり', 'いぬ', 'い'];
+const GOGYO = { 0: '木', 1: '木', 2: '火', 3: '火', 4: '土', 5: '土', 6: '金', 7: '金', 8: '水', 9: '水' };
+
+// ユリウス通日（グレゴリオ暦の日付から）
+function jdn(y, m, d) {
+  return Math.floor(Date.UTC(y, m - 1, d) / 86400000) + 2440588;
+}
+// 日柱の干支番号（0=甲子）。1900-01-01=甲戌、2000-01-01=戊午で検証済みの式
+function dayKanshiIndex(y, m, d) {
+  return ((jdn(y, m, d) + 49) % 60 + 60) % 60;
+}
+// 節入り（各月の始まり）の平均日。年により±1日ずれることがある
+// [月, 日] : 立春2/4を寅月の始まりとする
+const SETSU = [[2, 4], [3, 6], [4, 5], [5, 6], [6, 6], [7, 7], [8, 8], [9, 8], [10, 8], [11, 7], [12, 7], [1, 6]];
+// 生年月日 → { solarYear(立春基準の年), monthIdx(0=寅月〜11=丑月) }
+function solarYearMonth(y, m, d) {
+  const v = m * 100 + d;
+  // 立春(2/4)より前は前年扱い
+  const solarYear = (v < 204) ? y - 1 : y;
+  let monthIdx;
+  if (v >= 1207 || v < 106) {
+    monthIdx = 10; // 子月（大雪12/7〜小寒1/5）
+  } else if (v < 204) {
+    monthIdx = 11; // 丑月（小寒1/6〜立春2/3）
+  } else {
+    monthIdx = 0;
+    for (let i = 0; i < 10; i++) {
+      const start = SETSU[i][0] * 100 + SETSU[i][1];
+      const end = SETSU[i + 1][0] * 100 + SETSU[i + 1][1];
+      if (v >= start && v < end) { monthIdx = i; break; }
+    }
+  }
+  return { solarYear, monthIdx };
+}
+
+/* ==================== 四柱推命 ==================== */
+const NIKKAN_INFO = {
+  0: { sym: '大樹', yy: '陽', text: 'そびえ立つ大樹の人。曲がったことが嫌いで、まっすぐな正義感と向上心を持っています。一度決めたことを貫く芯の強さが最大の武器。折れない代わりに融通が利きにくい面もあるので、しなやかさを意識すると運気が伸びます。' },
+  1: { sym: '草花', yy: '陰', text: '風にそよぐ草花の人。柔軟で協調性があり、どんな環境でも根を張って生きられる強さを秘めています。一見おだやかですが、踏まれても立ち上がる粘り強さは十干随一。人に寄り添う優しさが幸運を呼びます。' },
+  2: { sym: '太陽', yy: '陽', text: '空を照らす太陽の人。明るく情熱的で、いるだけで場が華やぐ存在です。裏表がなく、誰に対しても分け隔てなく接する公平さが魅力。感情がストレートに出やすいので、ときに雲に隠れる（休む）ことも大切です。' },
+  3: { sym: '灯火', yy: '陰', text: '夜を照らす灯火の人。繊細な感受性と、内に秘めた情熱を併せ持ちます。芸術的センスと鋭い直感力に恵まれ、人の心の機微を照らすのが得意。ムラのある炎を安定させる「心の燃料補給」を忘れずに。' },
+  4: { sym: '山岳', yy: '陽', text: 'どっしり構えた山の人。安定感と包容力があり、周囲から自然と頼られる存在です。簡単には動じない胆力が魅力ですが、腰が重くなりがちな面も。動くと決めたときの山の迫力は誰にも止められません。' },
+  5: { sym: '田畑', yy: '陰', text: '実りを育む田畑の人。面倒見がよく、人や物事をコツコツ育てる才能があります。目立つことより支えることに喜びを感じる縁の下の力持ち。あなたが耕した土からは、たくさんの実りが生まれます。' },
+  6: { sym: '刀剣', yy: '陽', text: '鍛え抜かれた刀の人。決断力と行動力に優れ、白黒はっきりつけたい性分です。困難に立ち向かうほど鋭く磨かれていく、生粋の改革者タイプ。切れ味の使いどころを選ぶと、さらに大きな信頼を得られます。' },
+  7: { sym: '宝石', yy: '陰', text: '磨かれて輝く宝石の人。繊細な美意識と鋭い感性を持ち、細部に神が宿ることを知っています。プライドの高さは輝きの証。傷つきやすさも持ちますが、磨かれるたびに価値が増していく星です。' },
+  8: { sym: '大海', yy: '陽', text: '悠々と流れる大河・大海の人。スケールが大きく自由で、ひとつの場所にとどまらない行動力があります。知恵が豊かで発想も柔軟。流れを止められるとストレスになるので、常に「動ける余白」を持っておくと吉。' },
+  9: { sym: '雨露', yy: '陰', text: '万物を潤す雨露の人。物静かな知性と深い癒しの力を持ち、気づかぬうちに周囲の心を潤しています。観察力・研究心に優れた思索家タイプ。静かな環境で才能が開花します。' },
+};
+
+// 十二支の五行（本気）
+const BRANCH_GOGYO = { 0: '水', 1: '土', 2: '木', 3: '木', 4: '土', 5: '火', 6: '火', 7: '土', 8: '金', 9: '金', 10: '土', 11: '水' };
+const GOGYO_ORDER = ['木', '火', '土', '金', '水'];
+const GOGYO_MEANING = {
+  '木': '成長・発展・優しさ', '火': '情熱・表現・華やかさ', '土': '安定・信頼・包容力',
+  '金': '決断・正義・美意識', '水': '知恵・柔軟・癒し',
+};
+// 日干別の恋愛傾向・適職
+const NIKKAN_EXTRA = {
+  0: { love: '一途でまっすぐな恋をします。駆け引きは苦手ですが、その誠実さこそ最大の魅力。', job: '経営・管理職・公務員・教育など、筋を通す立場で力を発揮します。' },
+  1: { love: '相手に寄り添う柔らかな恋。包容力のある相手と結ばれると大きく花開きます。', job: '接客・看護・デザイン・園芸など、しなやかさと調和が活きる仕事。' },
+  2: { love: '太陽のように明るくオープンな恋。豊かな感情表現で愛情をまっすぐ注ぎます。', job: '営業・芸能・広告・講師など、人前に立って場を照らす仕事。' },
+  3: { love: '内に秘めた情熱型。心を許した相手にだけ見せる深い愛情が魅力です。', job: '研究・芸術・美容・カウンセラーなど、繊細な感性を活かす仕事。' },
+  4: { love: 'どっしり構えた安定の愛。頼りがいがあり、長く続く関係を築くのが得意。', job: '不動産・金融・建築・管理など、信頼と安定が求められる仕事。' },
+  5: { love: '相手を育てる母性的な愛。尽くしすぎには注意しつつ、温かな関係を築けます。', job: '教育・農業・人事・サポート職など、人とものを育てる仕事。' },
+  6: { love: '白黒はっきりした潔い恋。決断が早く、運命を感じたら一直線です。', job: '法律・警察・医療・エンジニアなど、切れ味と決断力が活きる仕事。' },
+  7: { love: '繊細で美しい恋を好みます。大切に扱ってくれる相手のもとで輝きを増します。', job: '宝飾・美容・金融・専門職など、精密さとセンスが活きる仕事。' },
+  8: { love: '自由でスケールの大きな恋。束縛のない関係でこそ愛情が深まります。', job: '貿易・運輸・企画・海外関係など、流れと変化を扱う仕事。' },
+  9: { love: '静かに深く愛するタイプ。言葉は少なくても、行動で愛情を示します。', job: '研究・医療・執筆・士業など、深い知性と集中力が活きる仕事。' },
+};
+// 五行の関係（0木1火2土3金4水）から今日の運勢を読む
+const GOGYO_IDX = { '木': 0, '火': 1, '土': 2, '金': 3, '水': 4 };
+// あなたの日干と、対象期間の干の五行関係から運勢を読む（今日・今月・今年で共通）
+function relationFor(userStem, otherStem, period) {
+  const u = GOGYO_IDX[GOGYO[userStem]], t = GOGYO_IDX[GOGYO[otherStem]];
+  const og = GOGYO[otherStem], ug = GOGYO[userStem];
+  let title, text;
+  if (u === t) {
+    title = '比和（ひわ）— マイペース吉';
+    text = `${period}はあなたと同じ「${og}」の気が巡ります。気負わず自然体でいるだけで物事がすっと進む運気。同じ志を持つ仲間との交流も吉です。`;
+  } else if ((t + 1) % 5 === u) {
+    title = '相生（そうじょう）— 追い風';
+    text = `「${og}」の気があなたの「${ug}」を育てる相生の運気。吸収力が高まるので、学び・交渉・新しい挑戦に最適の${period}です。`;
+  } else if ((u + 1) % 5 === t) {
+    title = '洩気（えいき）— 与えて徳を積む';
+    text = `あなたの「${ug}」の気が外へ流れ出やすい${period}。人のために動くと徳を積めますが、頑張りすぎによる消耗には注意。意識的に休息を取りましょう。`;
+  } else if ((u + 2) % 5 === t) {
+    title = '剋出（こくしゅつ）— 攻め時';
+    text = `あなたの気が「${og}」を制する攻めの運気。懸案事項に切り込むなら${period}です。主導権を握って、思い切って動きましょう。`;
+  } else {
+    title = '剋入（こくにゅう）— 守りが吉';
+    text = `「${og}」の気があなたを抑えがちな守りの${period}。流れに逆らわず、確認・準備・根回しに徹すると難を逃れ、その先が楽になります。`;
+  }
+  return { title, text };
+}
+// 現時点の日柱・月柱・年柱（干支暦ベース）
+function currentPillars() {
+  const now = new Date();
+  const dIdx = dayKanshiIndex(now.getFullYear(), now.getMonth() + 1, now.getDate());
+  const sy = solarYearMonth(now.getFullYear(), now.getMonth() + 1, now.getDate());
+  const yIdx = ((sy.solarYear - 4) % 60 + 60) % 60;
+  const toraStem = ((yIdx % 10) % 5 * 2 + 2) % 10;
+  const mStem = (toraStem + sy.monthIdx) % 10;
+  const mBranch = (2 + sy.monthIdx) % 12;
+  return {
+    day: { stem: dIdx % 10, name: STEMS[dIdx % 10] + BRANCHES[dIdx % 12] },
+    month: { stem: mStem, name: STEMS[mStem] + BRANCHES[mBranch] },
+    year: { stem: yIdx % 10, name: STEMS[yIdx % 10] + BRANCHES[yIdx % 12] },
+  };
+}
+// 生涯の流れ（各柱の天干＋地支の五行が導く時期の気質）
+function stageText(stem, branch) {
+  const stemFlavor = {
+    '木': '伸び広がる成長の気。学び続け、挑戦の幅を広げるほど道が開けます',
+    '火': '照らし輝く情熱の気。表現力と人気運が高まり、注目される場面が増えます',
+    '土': '実らせ支える安定の気。信頼を積み上げ、確かな基盤を築ける時期です',
+    '金': '研ぎ澄まされる収穫の気。決断力が冴え、努力が形ある成果になります',
+    '水': '深く流れる知恵の気。柔軟さと洞察力で、変化を味方につけられます',
+  }[GOGYO[stem]];
+  const bg = BRANCH_GOGYO[branch];
+  return `${stemFlavor}。足元では「${BRANCHES[branch]}」の${bg}（${GOGYO_MEANING[bg]}）が支えます`;
+}
+// 命式6文字（天干3＋地支3）の五行分布
+function gogyoBalanceHtml(stems, branches) {
+  const count = { '木': 0, '火': 0, '土': 0, '金': 0, '水': 0 };
+  stems.forEach(s => count[GOGYO[s]]++);
+  branches.forEach(b => count[BRANCH_GOGYO[b]]++);
+  const max = Math.max(...Object.values(count));
+  const strongest = GOGYO_ORDER.filter(g => count[g] === max);
+  const missing = GOGYO_ORDER.filter(g => count[g] === 0);
+  const bars = GOGYO_ORDER.map(g => `
+    <div class="meter-row">
+      <div class="m-label"><span>${g}（${GOGYO_MEANING[g]}）</span><span>${count[g]}個</span></div>
+      <div class="meter"><div class="fill" data-w="${Math.round(count[g] / 6 * 100)}"></div></div>
+    </div>`).join('');
+  let comment = `あなたの命式で最も強いのは「${strongest.join('・')}」の気。${strongest.map(g => GOGYO_MEANING[g]).join('、')}があなたの土台にあります。`;
+  if (missing.length > 0) {
+    comment += `一方「${missing.join('・')}」の気が命式にないため、${missing.map(g => GOGYO_MEANING[g]).join('、')}を意識的に取り入れると運のバランスが整います。`;
+  } else {
+    comment += '五行がすべて揃ったバランスの良い命式です。';
+  }
+  return `
+    <div class="t-block" style="background:rgba(255,255,255,0.05); border-radius:10px; padding:14px; margin-bottom:10px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:8px;">☯️ 五行バランス（命式六字の内訳）</div>
+      ${bars}
+      <div style="font-size:0.85rem; line-height:1.7; margin-top:6px;">${comment}</div>
+    </div>`;
+}
+
+document.getElementById('shichuBtn').addEventListener('click', () => {
+  const v = document.getElementById('shichuDate').value;
+  const el = document.getElementById('shichuResult');
+  if (!v) {
+    el.innerHTML = '<p style="color:#ff9a9e; text-align:center;">生年月日を入力してください</p>';
+    el.classList.add('show');
+    return;
+  }
+  const [y, m, d] = v.split('-').map(Number);
+  const { solarYear, monthIdx } = solarYearMonth(y, m, d);
+
+  // 年柱：西暦-4 を60で割った余り（1984年＝甲子で検証済み）
+  const yIdx = ((solarYear - 4) % 60 + 60) % 60;
+  const yStem = yIdx % 10, yBranch = yIdx % 12;
+  // 月柱：年干から寅月の干を求め（五虎遁）、月を進める
+  const toraStem = ((yStem % 5) * 2 + 2) % 10;
+  const mStem = (toraStem + monthIdx) % 10;
+  const mBranch = (2 + monthIdx) % 12;
+  // 日柱
+  const dIdx = dayKanshiIndex(y, m, d);
+  const dStem = dIdx % 10, dBranch = dIdx % 12;
+
+  const nikkan = NIKKAN_INFO[dStem];
+  const pillar = (s, b) => `${STEMS[s]}${BRANCHES[b]}`;
+  const yomi = (s, b) => `${STEMS_YOMI[s]}${BRANCHES_YOMI[b]}`;
+
+  el.innerHTML = `
+    <div class="pillar-grid">
+      <div class="pillar">
+        <div class="p-label">年柱（社会・晩年）</div>
+        <div class="p-kanji">${pillar(yStem, yBranch)}</div>
+        <div class="p-yomi">${yomi(yStem, yBranch)}</div>
+      </div>
+      <div class="pillar">
+        <div class="p-label">月柱（仕事・中年）</div>
+        <div class="p-kanji">${pillar(mStem, mBranch)}</div>
+        <div class="p-yomi">${yomi(mStem, mBranch)}</div>
+      </div>
+      <div class="pillar">
+        <div class="p-label">日柱（本質・自分）</div>
+        <div class="p-kanji">${pillar(dStem, dBranch)}</div>
+        <div class="p-yomi">${yomi(dStem, dBranch)}</div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-bottom: 8px;">
+      <span class="gogyo-badge">日干：${STEMS[dStem]}（${STEMS_YOMI[dStem]}）</span>
+      <span class="gogyo-badge">五行：${GOGYO[dStem]}の${nikkan.yy}</span>
+      <span class="gogyo-badge">象意：${nikkan.sym}</span>
+    </div>
+    <p class="fortune-text">${nikkan.text}</p>
+    ${gogyoBalanceHtml([yStem, mStem, dStem], [yBranch, mBranch, dBranch])}
+    <div class="t-block" style="background:rgba(255,255,255,0.05); border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">💗 恋愛傾向</div>
+      <div style="font-size:0.88rem; line-height:1.7;">${NIKKAN_EXTRA[dStem].love}</div>
+    </div>
+    <div class="t-block" style="background:rgba(255,255,255,0.05); border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">💼 適職</div>
+      <div style="font-size:0.88rem; line-height:1.7;">${NIKKAN_EXTRA[dStem].job}</div>
+    </div>
+    <div class="t-block" style="background:rgba(255,255,255,0.05); border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">🛤️ 生涯の流れ（三柱が導く人生の気質）</div>
+      <div style="font-size:0.88rem; line-height:1.9;">
+        <strong>人生の核（日柱：${pillar(dStem, dBranch)}）</strong>— ${stageText(dStem, dBranch)}。<br>
+        <strong>働き盛り・中年期（月柱：${pillar(mStem, mBranch)}）</strong>— ${stageText(mStem, mBranch)}。<br>
+        <strong>社会との関わり・晩年期（年柱：${pillar(yStem, yBranch)}）</strong>— ${stageText(yStem, yBranch)}。
+      </div>
+    </div>
+    ${(() => {
+      const cp = currentPillars();
+      const rd = relationFor(dStem, cp.day.stem, '今日');
+      const rm = relationFor(dStem, cp.month.stem, '今月');
+      const ry = relationFor(dStem, cp.year.stem, '今年');
+      const block = (icon, label, pillarName, r) => `
+      <div class="t-block" style="background:rgba(246,211,101,0.08); border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+        <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">${icon} ${label} — 「${pillarName}」 ／ ${r.title}</div>
+        <div style="font-size:0.88rem; line-height:1.7;">${r.text}</div>
+      </div>`;
+      return block('📅', '今日の運勢', cp.day.name + 'の日', rd)
+           + block('🗓️', '今月の運勢', cp.month.name + 'の月', rm)
+           + block('🎍', '今年の運勢', cp.year.name + 'の年', ry);
+    })()}
+    <p class="note">※ 命式は干支暦（立春年切り・節月）に基づく計算です。節入り日は平均日を用いているため、月の変わり目（節入り日）前後の生まれの方は月柱が1つずれる場合があります。時柱は出生時刻が必要なため省略しています。今日・今月・今年の運勢は、あなたの日干と現在の日干・月干・年干の五行関係（相生・相剋）から導いています。</p>
+  `;
+  el.classList.add('show');
+  animateFills(el);
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+/* ==================== 九星気学 ==================== */
+const KYUSEI = [
+  null,
+  { name: '一白水星', gogyo: '水', pos: '北', text: '水のように柔軟で、どんな器にも馴染む適応力の持ち主。苦労を糧に変える粘り強さと、人の心の深くに寄り添う優しさがあります。夜の静けさを味方につける星で、思慮深さが最大の武器です。' },
+  { name: '二黒土星', gogyo: '土', pos: '南西', text: '大地の星。堅実・勤勉で、コツコツ積み上げる力は九星随一です。母なる大地のように人を支え育てる徳があり、縁の下の力持ちとして厚い信頼を集めます。焦らず一歩ずつが開運の鍵。' },
+  { name: '三碧木星', gogyo: '木', pos: '東', text: '雷と春の芽吹きの星。若々しい行動力と発信力があり、新しいことへの反応速度は誰にも負けません。声や音楽など「音」に縁が深い星。思い立ったが吉日を地で行くほど運が回ります。' },
+  { name: '四緑木星', gogyo: '木', pos: '東南', text: '風の星。爽やかな社交性で人と人、物と物を結びつける「縁」の達人です。信頼と評判が財産になる星で、風のように広がる人脈があなたを遠くまで運びます。整った身だしなみが開運アイテム。' },
+  { name: '五黄土星', gogyo: '土', pos: '中央', text: '九星の中心に座す帝王の星。破壊と再生を司る強烈なエネルギーを持ち、どん底から立ち上がる底力は九星最強です。存在感があり、良くも悪くも周囲へ与える影響が大。器の大きさで運命が決まります。' },
+  { name: '六白金星', gogyo: '金', pos: '北西', text: '天の星。高い理想と強い責任感を持つ、生まれながらのリーダー気質です。休むことが苦手なほどのエネルギーで、動けば動くほど運が磨かれます。天が味方する星ゆえ、誠実さを貫くことが絶対条件。' },
+  { name: '七赤金星', gogyo: '金', pos: '西', text: '沢と実りの星。愛嬌と話術に恵まれ、人生を楽しむ天才です。金運と食に縁が深く、笑顔が最強の開運ツール。人を喜ばせることがそのまま自分の実りになる、豊かな晩年運を持つ星です。' },
+  { name: '八白土星', gogyo: '土', pos: '北東', text: '山の星。忍耐強く、変化の時を静かに待てる胆力があります。「継ぐ・貯める・積み上げる」に縁が深く、家や組織を発展させる相続の星。転機をチャンスに変える切り替えの上手さも持っています。' },
+  { name: '九紫火星', gogyo: '火', pos: '南', text: '火と太陽の星。華やかな美意識と鋭い直感、燃えるような情熱を持ちます。芸術・学問など「光るもの」で才能を発揮する星。熱しやすく冷めやすい炎を、続ける工夫で保てば大成します。' },
+];
+
+// 本命星：年の数字を一桁まで足し、11から引く（10以上なら9を引く）。立春年切り
+function honmeisei(solarYear) {
+  let s = solarYear;
+  while (s > 9) s = String(s).split('').map(Number).reduce((a, b) => a + b, 0);
+  let star = 11 - s;
+  if (star > 9) star -= 9;
+  return star;
+}
+// 月命星：本命星のグループで寅月の星が決まり、月ごとに1つ減る
+function getsumeisei(honmei, monthIdx) {
+  const start = [8, 2, 5][(honmei - 1) % 3]; // 1,4,7→8 / 2,5,8→2 / 3,6,9→5
+  return ((start - monthIdx - 1) % 9 + 9) % 9 + 1;
+}
+
+// 回座（本命星が年盤・月盤のどの宮にいるか）による運勢
+const PALACE = {
+  1: { name: '坎宮（北）', text: '運気の冬にあたる充電期。新しい展開は少なめですが、水面下で力を蓄える大切な時期です。学びと健康管理に投資すると、来たる春に大きく芽吹きます。' },
+  2: { name: '坤宮（南西）', text: '土を耕す準備の時期。地道な努力と丁寧な人間関係づくりが、後の実りを決めます。焦らずコツコツが最強の戦略です。' },
+  3: { name: '震宮（東）', text: '運気の春、発芽の時期。新しいことを始める絶好期です。行動力が高まり、スタートしたことが勢いよく伸びていきます。' },
+  4: { name: '巽宮（東南）', text: '風が縁を運ぶ成長期。人脈・信用・評判が広がり、物事が整っていきます。結婚・契約・商談などまとめごとに良い運気です。' },
+  5: { name: '中宮', text: '運気の中心に座る頂点の時期。注目と実りが集まる一方「八方塞がり」とも言われ、新規拡大より現状の充実・守りが吉。足元を固めましょう。' },
+  6: { name: '乾宮（北西）', text: '天の恵みを受ける多忙と実りの時期。仕事が忙しくなるほど運が回ります。責任ある役割を任されたら、迷わず引き受けましょう。' },
+  7: { name: '兌宮（西）', text: '実りを味わう収穫期。金運・交際運が高まり、楽しみごとが増えます。実りに感謝しつつ、浪費と口の災いにだけ気をつけて。' },
+  8: { name: '艮宮（北東）', text: '山を越える変化・転換期。環境や立場に変化が起きやすいときです。変化を恐れず乗ることで、次のステージへ進めます。' },
+  9: { name: '離宮（南）', text: '光が当たる注目の時期。才能が評価され、隠れていたことも明るみに出ます。実力が問われるので、誠実さを保つことが最大の開運です。' },
+};
+// 中宮の星 center のとき、star が座る宮（後天定位の数）
+function palaceOf(star, center) {
+  return ((5 + star - center - 1) % 9 + 9) % 9 + 1;
+}
+
+document.getElementById('kyuseiBtn').addEventListener('click', () => {
+  const v = document.getElementById('kyuseiDate').value;
+  const el = document.getElementById('kyuseiResult');
+  if (!v) {
+    el.innerHTML = '<p style="color:#ff9a9e; text-align:center;">生年月日を入力してください</p>';
+    el.classList.add('show');
+    return;
+  }
+  const [y, m, d] = v.split('-').map(Number);
+  const { solarYear, monthIdx } = solarYearMonth(y, m, d);
+  const hon = honmeisei(solarYear);
+  const getsu = getsumeisei(hon, monthIdx);
+  const h = KYUSEI[hon], g = KYUSEI[getsu];
+
+  el.innerHTML = `
+    <div class="kyusei-main">
+      <div style="font-size:0.8rem; color:var(--text-dim); margin-bottom:4px;">あなたの本命星</div>
+      <div class="k-name">${h.name}</div>
+      <div style="margin-top:8px;">
+        <span class="gogyo-badge">五行：${h.gogyo}</span>
+        <span class="gogyo-badge">定位：${h.pos}</span>
+      </div>
+    </div>
+    <p class="fortune-text">${h.text}</p>
+    <div class="kyusei-sub">
+      <div class="lucky-item" style="padding:14px 10px;">
+        <span class="label">本命星（本質・運勢の軸）</span>
+        <span class="value">${h.name}</span>
+      </div>
+      <div class="lucky-item" style="padding:14px 10px;">
+        <span class="label">月命星（内面・気質）</span>
+        <span class="value">${g.name}</span>
+      </div>
+    </div>
+    <p class="fortune-text" style="font-size:0.88rem;"><strong>内面（月命星：${g.name}）</strong>— ${g.text}</p>
+    ${(() => {
+      const now = new Date();
+      const nowSolar = solarYearMonth(now.getFullYear(), now.getMonth() + 1, now.getDate());
+      const yearCenter = honmeisei(nowSolar.solarYear);
+      const monthCenter = getsumeisei(yearCenter, nowSolar.monthIdx);
+      const yp = PALACE[palaceOf(hon, yearCenter)];
+      const mp = PALACE[palaceOf(hon, monthCenter)];
+      return `
+      <div class="t-block" style="background:rgba(246,211,101,0.08); border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+        <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">📅 今年（${nowSolar.solarYear}年・${KYUSEI[yearCenter].name}中宮）の運勢 — あなたの本命星は「${yp.name}」に回座</div>
+        <div style="font-size:0.88rem; line-height:1.7;">${yp.text}</div>
+      </div>
+      <div class="t-block" style="background:rgba(246,211,101,0.08); border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+        <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">🗓️ 今月（${KYUSEI[monthCenter].name}中宮）の運勢 — あなたの本命星は「${mp.name}」に回座</div>
+        <div style="font-size:0.88rem; line-height:1.7;">${mp.text}</div>
+      </div>`;
+    })()}
+    <p class="note">※ 九星気学では立春（2月4日頃）を年の変わり目とするため、1月1日〜2月3日生まれの方は前年の九星になります。年運・月運は、年盤・月盤上であなたの本命星がどの宮に巡っているか（回座）から導いています。</p>
+  `;
+  el.classList.add('show');
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+/* ==================== 月齢 ==================== */
+const SYNODIC = 29.530588853; // 朔望月（日）
+const NEW_MOON_JD = 2451550.26; // 基準新月：2000年1月6日 18:14 UTC
+
+function moonAgeNow() {
+  const jd = Date.now() / 86400000 + 2440587.5;
+  return ((jd - NEW_MOON_JD) % SYNODIC + SYNODIC) % SYNODIC;
+}
+const MOON_PHASES = [
+  { max: 1.0,  emoji: '🌑', name: '新月（朔）',     advice: '始まりの日。新しい願い事・目標を立てるのに最も適したタイミングです。紙に書き出すと、月の満ち欠けとともに願いが育っていきます。' },
+  { max: 4.0,  emoji: '🌒', name: '三日月',         advice: '芽吹きの月。新月に蒔いた種が動き始めるとき。小さな一歩を実際に踏み出すと、月の成長する力が背中を押してくれます。' },
+  { max: 6.5,  emoji: '🌒', name: '上弦前の月',     advice: '成長の月。吸収力が高まる時期で、勉強や新しいスキルの習得に最適。出会いにも良い流れがあります。' },
+  { max: 8.5,  emoji: '🌓', name: '上弦の月',       advice: '決断の月。半分に満ちた月は「続けるか、方向転換するか」を問いかけます。ここで軌道修正したことは満月までに実を結びやすいでしょう。' },
+  { max: 12.5, emoji: '🌔', name: '十日夜〜小望月', advice: '仕上げの月。満月に向かってエネルギーが最高潮へ。追い込み・交渉・アピールなど、積極的な行動が実りやすいときです。' },
+  { max: 15.8, emoji: '🌕', name: '満月（望）',     advice: '達成と感謝の月。これまでの成果を受け取り、感謝するとき。同時に感情も満ちやすいので、大きな買い物や衝動的な決断は一呼吸おいて。手放したい習慣を書き出すのにも最良の日です。' },
+  { max: 18.5, emoji: '🌖', name: '十六夜〜立待月', advice: '共有の月。満月の余韻の中で、成果や喜びを人と分かち合うと運が巡ります。ゆっくり月の出を待つように、焦らない姿勢が吉。' },
+  { max: 21.5, emoji: '🌖', name: '居待月〜寝待月', advice: '整理の月。欠けていく月は「減らす」ことの味方。断捨離・データ整理・人間関係の棚卸しに向いています。' },
+  { max: 23.5, emoji: '🌗', name: '下弦の月',       advice: '手放しの月。不要になった習慣・執着を手放す絶好機。デトックスや休息を意識すると、心身が軽くなります。' },
+  { max: 27.0, emoji: '🌘', name: '有明月',         advice: '静養の月。次の新月への準備期間です。予定を詰め込まず、内省と休息を。夜明けの空に残る月のように、静かに自分と向き合って。' },
+  { max: 30.0, emoji: '🌑', name: '晦（新月前）',   advice: 'リセットの月。ひと巡りの終わり。今のうちに身の回りを整えておくと、新月からの新しいサイクルを気持ちよく始められます。' },
+];
+
+(function renderMoon() {
+  const age = moonAgeNow();
+  const phase = MOON_PHASES.find(p => age < p.max) || MOON_PHASES[0];
+  const illum = Math.round((1 - Math.cos(2 * Math.PI * age / SYNODIC)) / 2 * 100);
+  const daysToFull = age < 14.77 ? (14.77 - age) : (SYNODIC - age + 14.77);
+  const daysToNew = SYNODIC - age;
+  document.getElementById('moonResult').innerHTML = `
+    <div class="moon-display">
+      <span class="moon-emoji">${phase.emoji}</span>
+      <div class="moon-name">${phase.name}</div>
+      <div class="moon-age">月齢 ${age.toFixed(1)} ／ 輝面比 約${illum}%</div>
+    </div>
+    <p class="fortune-text">${phase.advice}</p>
+    <div class="lucky-grid">
+      <div class="lucky-item"><span class="label">次の満月まで</span><span class="value">約${Math.round(daysToFull)}日</span></div>
+      <div class="lucky-item"><span class="label">次の新月まで</span><span class="value">約${Math.round(daysToNew)}日</span></div>
+      <div class="lucky-item"><span class="label">月の状態</span><span class="value">${age < 14.77 ? '満ちていく月' : '欠けていく月'}</span></div>
+    </div>
+    <p class="note">※ 月齢は朔望月（平均29.53日）に基づく略算です（誤差±0.5日程度）。</p>
+  `;
+})();
+
+/* ==================== マヤ暦（ツォルキン） ==================== */
+// 太陽の紋章（20種）。色は 赤→白→青→黄 の循環
+const MAYA_SEALS = [
+  { name: '赤い龍', maya: 'イミッシュ', key: '誕生・母性・生命力', text: '新しいものを生み出す根源のエネルギーを持つ人。面倒見がよく情熱的で、家族や仲間のためなら底知れぬ力を発揮します。' },
+  { name: '白い風', maya: 'イーク', key: '伝える・霊感・呼吸', text: '繊細な感受性とメッセージを運ぶ力の人。言葉・音楽・文章など、心を伝える表現で人々の共感を呼びます。' },
+  { name: '青い夜', maya: 'アクバル', key: '夢・直感・豊かさ', text: '豊かな内面世界を持つ夢の探求者。自分の夢を語り、実現していく力があります。マイペースさも才能のうち。' },
+  { name: '黄色い種', maya: 'カン', key: '気づき・開花・探究', text: '物事の本質を掘り下げる探究者。納得したことは深く根を張り、やがて大輪の花を咲かせます。人に気づきを与える人。' },
+  { name: '赤い蛇', maya: 'チクチャン', key: '情熱・本能・集中力', text: '抜群の集中力と身体感覚を持つ人。真実に敏感で、目標に狙いを定めたときの爆発力は20の紋章随一です。' },
+  { name: '白い世界の橋渡し', maya: 'キミー', key: '橋渡し・手放し・機会', text: '人と人、世界と世界をつなぐ生まれながらの外交官。手放すことで新しい機会を引き寄せる、おもてなしの達人です。' },
+  { name: '青い手', maya: 'マニーク', key: '癒し・遂行・体験', text: '手を使うことに癒しと創造の才能を持つ人。体験から学び、最後までやり遂げる力で信頼を集めます。' },
+  { name: '黄色い星', maya: 'ラマト', key: '美・調和・職人', text: '高い美意識で身の回りを美しく整える人。星のように輝き、目にする人の心を和ませる芸術家肌です。' },
+  { name: '赤い月', maya: 'ムルック', key: '浄化・流れ・使命', text: '清らかな水のように場を浄化する改革者。役割を自覚したときに大きな流れを生み、周囲を巻き込んでいきます。' },
+  { name: '白い犬', maya: 'オク', key: '忠実・愛・信頼', text: '誠実で愛情深く、信頼で人の心をつなぐ人。家族や仲間への忠誠心が厚く、チームの心の支柱になります。' },
+  { name: '青い猿', maya: 'チュエン', key: '遊び・魔術・ユーモア', text: '遊び心と知性で人生を楽しむ天才。ユーモアで場の空気を変え、困難さえゲームに変えてしまう魔術師です。' },
+  { name: '黄色い人', maya: 'エブ', key: '自由意志・道・感化', text: '自分の決めた道を歩む自由人。こだわりの生き方そのものが周囲への影響力となる、背中で導くタイプです。' },
+  { name: '赤い空歩く人', maya: 'ベン', key: '探索・勇気・成長', text: '天と地をつなぐ冒険者。人の成長を助けることに喜びを感じ、現場に足を運んで橋を架ける行動派です。' },
+  { name: '白い魔法使い', maya: 'イッシュ', key: '魅惑・受容・純粋さ', text: '「いま」を生きる魔法のような存在感の人。ありのままを受け入れる度量で、人の心を惹きつけて離しません。' },
+  { name: '青い鷲', maya: 'メン', key: 'ビジョン・観察・戦略', text: '高い視点から全体を見渡す戦略家。先を読む力と観察眼に優れ、大きな絵を描いてチームを導きます。' },
+  { name: '黄色い戦士', maya: 'キーブ', key: '知性・挑戦・問いかけ', text: '恐れず問い、挑み続ける知的な戦士。困難な課題ほど燃えるチャレンジ精神で、道なき道を切り拓きます。' },
+  { name: '赤い地球', maya: 'カバン', key: 'シンクロ・舵取り・絆', text: '流れとタイミングを読む力に長けた案内人。シンクロニシティ（意味ある偶然）を味方につけ、人々の心を結びます。' },
+  { name: '白い鏡', maya: 'エツナブ', key: '映し出す・調和・美学', text: 'ありのままを映す鏡のような公正さを持つ人。曖昧さを嫌う潔い美学で、周囲に凛とした秩序をもたらします。' },
+  { name: '青い嵐', maya: 'カウアク', key: '変容・再生・かまど', text: '周囲を巻き込む変革のエネルギーを持つ人。火事場の底力と、人を元気にする「かまどの火」のような温かさが同居します。' },
+  { name: '黄色い太陽', maya: 'アハウ', key: '無条件の愛・完成・中心', text: '中心で皆を照らす太陽の人。存在そのものが周囲を明るくし、公平無私の愛で組織や家庭の軸になります。' },
+];
+const MAYA_TONES = [
+  null,
+  { name: '磁気の音', key: '目的', text: '目的を定めて引き寄せる、始まりの音。意図が明確になったとき、必要な人と物事が自然と集まります。' },
+  { name: '月の音', key: '挑戦', text: '二極性と挑戦の音。葛藤から逃げずに向き合うことで器が広がり、人の痛みがわかる深みが生まれます。' },
+  { name: '電気の音', key: '奉仕', text: '奉仕の音。誰かのために動くときに最大のエネルギーが湧く、活性化の力を持ちます。' },
+  { name: '自己存在の音', key: '形にする', text: '形を定める音。計画・設計・仕組みづくりが得意で、アイデアを現実の形に落とし込みます。' },
+  { name: '倍音の音', key: '輝き', text: '中心で輝く指揮者の音。場の中央に立つことで力を発揮し、周囲に力を与えます。' },
+  { name: '律動の音', key: '平等・バランス', text: 'バランスを整える音。偏りを直し、環境や人間関係を組織する才能があります。' },
+  { name: '共振の音', key: '調律', text: '調律の音。直感のチャンネルが太く、インスピレーションで人と場を導く神秘的な力を持ちます。' },
+  { name: '銀河の音', key: '調和', text: '調和の音。信念と行動が一致したときに輝きます。誠実さがそのまま影響力になる人です。' },
+  { name: '太陽の音', key: '意図の実現', text: '意図を実現する脈動の音。思い描いたことを粘り強く現実化する、強い実現力を持ちます。' },
+  { name: '惑星の音', key: '仕上げ', text: '完成させる音。物事を仕上げ、磨き上げるプロデュース力に優れます。' },
+  { name: 'スペクトルの音', key: '解放', text: '解放の音。溜め込んだものを手放すことで変容が起きます。執着を解く力が、自分と人を自由にします。' },
+  { name: '水晶の音', key: '協力', text: '協力の音。人と共に働くときに知恵が冴える、安定感のある調整役です。' },
+  { name: '宇宙の音', key: '存在・超越', text: '「いまここ」に在る超越の音。存在そのものが人を癒し、時に周囲の理解を超えたスケールで生きます。' },
+];
+const SEAL_COLOR_CLS = ['seal-red', 'seal-white', 'seal-blue', 'seal-yellow'];
+
+// KIN算出：GMT対応（JDN 584283 = 4アハウ = KIN160）。2012-12-21 = KIN160 で検証
+function mayaKin(y, m, d) {
+  const days = jdn(y, m, d) - 584283;
+  return ((159 + days) % 260 + 260) % 260 + 1;
+}
+function kinParts(kin) {
+  const seal = (kin - 1) % 20;
+  const tone = (kin - 1) % 13 + 1;
+  return { seal, tone };
+}
+function sealSpan(sealIdx) {
+  return `<span class="${SEAL_COLOR_CLS[sealIdx % 4]}">${MAYA_SEALS[sealIdx].name}</span>`;
+}
+
+document.getElementById('mayaBtn').addEventListener('click', () => {
+  const v = document.getElementById('mayaDate').value;
+  const el = document.getElementById('mayaResult');
+  if (!v) {
+    el.innerHTML = '<p style="color:#ff9a9e; text-align:center;">生年月日を入力してください</p>';
+    el.classList.add('show');
+    return;
+  }
+  const [y, m, d] = v.split('-').map(Number);
+  const kin = mayaKin(y, m, d);
+  const { seal, tone } = kinParts(kin);
+  const s = MAYA_SEALS[seal], t = MAYA_TONES[tone];
+  // ウェイブスペル（13日周期の起点の紋章＝人生のテーマ）
+  let wsKin = kin - (tone - 1);
+  if (wsKin <= 0) wsKin += 260;
+  const wsSeal = (wsKin - 1) % 20;
+  // 反対の紋章（挑戦をくれる相手）と神秘KIN（惹かれ合う相手）
+  const oppSeal = (seal + 10) % 20;
+  const mysticKin = 261 - kin;
+  const mysticParts = kinParts(mysticKin);
+  // 今日のKIN
+  const now = new Date();
+  const todayKin = mayaKin(now.getFullYear(), now.getMonth() + 1, now.getDate());
+  const tp = kinParts(todayKin);
+
+  el.innerHTML = `
+    <div class="kin-display">
+      <div style="font-size:0.8rem; color:var(--text-dim);">あなたの銀河の署名</div>
+      <div class="kin-num">KIN ${kin}</div>
+      <div class="kin-seal">${sealSpan(seal)}<span style="font-size:0.8rem; color:var(--text-dim);">（${s.maya}）</span></div>
+      <div class="kin-tone">銀河の音${tone}「${t.name}」</div>
+    </div>
+    <div class="t-block" style="background:rgba(255,255,255,0.05); border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">☀️ 太陽の紋章「${s.name}」— ${s.key}（生涯変わらないあなたの本質）</div>
+      <div style="font-size:0.88rem; line-height:1.7;">${s.text}</div>
+    </div>
+    <div class="t-block" style="background:rgba(255,255,255,0.05); border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">🎵 銀河の音${tone}「${t.name}」— ${t.key}（あなたのエネルギーの出し方）</div>
+      <div style="font-size:0.88rem; line-height:1.7;">${t.text}</div>
+    </div>
+    <div class="t-block" style="background:rgba(255,255,255,0.05); border-radius:10px; padding:12px 14px; margin-bottom:10px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">🌊 ウェイブスペル「${MAYA_SEALS[wsSeal].name}」（人生の大きなテーマ）</div>
+      <div style="font-size:0.88rem; line-height:1.7;">あなたの13日の波は${sealSpan(wsSeal)}から始まっています。${MAYA_SEALS[wsSeal].key}——これが人生の底流にあるテーマです。</div>
+    </div>
+    <div class="lucky-grid" style="grid-template-columns:repeat(2,1fr); margin-bottom:10px;">
+      <div class="lucky-item" style="padding:14px 10px;">
+        <span class="label">反対の紋章（学びをくれる相手）</span>
+        <span class="value" style="font-size:0.85rem;">${MAYA_SEALS[oppSeal].name}</span>
+      </div>
+      <div class="lucky-item" style="padding:14px 10px;">
+        <span class="label">神秘KIN（惹かれ合う相手）</span>
+        <span class="value" style="font-size:0.85rem;">KIN ${mysticKin}（${MAYA_SEALS[mysticParts.seal].name}）</span>
+      </div>
+    </div>
+    <div class="t-block" style="background:rgba(246,211,101,0.08); border-radius:10px; padding:12px 14px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">📅 今日のツォルキン — KIN ${todayKin}「${MAYA_SEALS[tp.seal].name}・${MAYA_TONES[tp.tone].name}${tp.tone}」</div>
+      <div style="font-size:0.88rem; line-height:1.7;">今日は「${MAYA_SEALS[tp.seal].key}」のエネルギーが流れる日。${MAYA_TONES[tp.tone].key}を意識して過ごすと、暦の流れに乗れます。</div>
+    </div>
+    <p class="note">※ 実在のマヤ・ツォルキン暦（GMT対応・584283）で計算しています。マヤ文明の「時の終わり」2012年12月21日＝4アハウ（KIN160）と一致することを検証済みです。書籍やアプリで広まっている「13の月の暦（ドリームスペル）」は起点とうるう日の扱いが異なるため、KINが一致しない場合があります。</p>
+  `;
+  el.classList.add('show');
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+/* ==================== ルーン占い ==================== */
+// エルダー・フサルク24文字。rev: 逆位置が存在するか（左右対称の9文字は逆位置なし）
+const RUNES = [
+  { g: 'ᚠ', name: 'フェオ', mean: '家畜・財産', up: '豊かさが巡ってくる暗示。日々の努力が収入や実りに変わっていきます。', rev: '浪費や損失に注意。お金と心のエネルギー、両方の収支を丁寧に。' },
+  { g: 'ᚢ', name: 'ウル', mean: '野牛', up: '力強い生命力と健康。困難を押し切る野生のパワーがみなぎっています。', rev: '無理のしすぎ・体調の乱れに注意。休息も戦略のうちです。' },
+  { g: 'ᚦ', name: 'ソーン', mean: '棘・巨人', up: '守りを固めるべき時。慎重さと防御があなたを危険から守ります。', rev: '焦りからの衝動的な行動が裏目に出そう。決断の前に一呼吸おいて。' },
+  { g: 'ᚨ', name: 'アンスール', mean: '神の口', up: '良い知らせや助言が届く暗示。経験者・年長者の言葉に耳を傾けて。', rev: '誤解や伝達ミスに注意。大事な話は文面でも残して確認を。' },
+  { g: 'ᚱ', name: 'ラド', mean: '騎行・車輪', up: '旅・移動・物事の前進。あなたは正しい道筋に乗っています。', rev: '計画の乱れや遠回りの暗示。予定に余白を持たせましょう。' },
+  { g: 'ᚲ', name: 'ケン', mean: '松明', up: 'ひらめきと創造の炎が灯ります。学び・制作・企画が大きく捗る時。', rev: '情熱の火が弱まり気味。小さな好奇心から再点火を。' },
+  { g: 'ᚷ', name: 'ギューフ', mean: '贈り物', up: '良縁・パートナーシップ・ギフトの暗示。与えたものは巡って返ってきます。', rev: null },
+  { g: 'ᚹ', name: 'ウィン', mean: '喜び', up: '願いの成就と幸福。仲間と喜びを分かち合うことで運がさらに広がります。', rev: '喜びが少し遅れて届く暗示。腐らずに準備を続けて。' },
+  { g: 'ᚺ', name: 'ハガル', mean: '雹', up: '予期せぬ変化・破壊と再生。嵐のあとの大地は肥え、より良い芽が出ます。', rev: null },
+  { g: 'ᚾ', name: 'ニイド', mean: '必要・欠乏', up: '忍耐の時。制限の中でこそ、本当に必要なものが見えてきます。', rev: '我慢の方向違いに注意。手放すべきは目標ではなく執着かもしれません。' },
+  { g: 'ᛁ', name: 'イサ', mean: '氷', up: '停滞・凍結の時。いまは動かず待つことが最善の一手です。氷は必ず溶けます。', rev: null },
+  { g: 'ᛃ', name: 'ヤラ', mean: '収穫・一年', up: '実りの季節の到来。積み重ねてきた努力が正当に報われます。', rev: null },
+  { g: 'ᛇ', name: 'ユル', mean: 'イチイの木', up: '死と再生の樹。いま越えようとしている困難は、成長への通過儀礼です。', rev: null },
+  { g: 'ᛈ', name: 'ペオース', mean: '運命の杯', up: '隠れていたものが明らかになる時。直感と運があなたに味方します。', rev: '秘密や期待外れに注意。運まかせの賭けごとは控えめに。' },
+  { g: 'ᛉ', name: 'エオロー', mean: '保護・大鹿', up: '守護のルーン。危険から守られ、助けてくれる人が現れます。', rev: '無防備になりがちな時。うまい話には裏がないか確かめて。' },
+  { g: 'ᛊ', name: 'シゲル', mean: '太陽', up: '勝利と成功の光。自信を持って進めば、道は明るく照らされます。', rev: null },
+  { g: 'ᛏ', name: 'ティール', mean: '天空神テュール', up: '正義と勝利のルーン。筋を通す勇気が、最終的な勝利を呼び込みます。', rev: '熱意の空回りや不公平感に注意。戦う場所を選びましょう。' },
+  { g: 'ᛒ', name: 'ベオーク', mean: '白樺', up: '成長・誕生・新しい始まり。家庭運・育成運も良好です。', rev: '成長の一時停止。焦らず土台の手入れに時間をかけて。' },
+  { g: 'ᛖ', name: 'エオー', mean: '馬', up: '信頼と協力で前進する時。パートナーとの連携が成功の鍵です。', rev: '連携のズレに注意。認識合わせを丁寧に行いましょう。' },
+  { g: 'ᛗ', name: 'マン', mean: '人間', up: '協調と自己理解のルーン。人との関わりの中にいまの答えがあります。', rev: '孤立や思い込みに注意。第三者の視点を借りると突破口が見えます。' },
+  { g: 'ᛚ', name: 'ラーグ', mean: '水', up: '直感と流れのルーン。感性に従えば、自然と良い方へ運ばれていきます。', rev: '感情の波に流されないで。大きな判断は心が凪いでから。' },
+  { g: 'ᛜ', name: 'イング', mean: '豊穣神イング', up: '完了と豊穣。ひとつの物事が良い形で区切りを迎え、新しい段階へ進みます。', rev: null },
+  { g: 'ᛞ', name: 'ダエグ', mean: '夜明け', up: '劇的な好転・ブレイクスルーの暗示。夜明けはもう近くまで来ています。', rev: null },
+  { g: 'ᛟ', name: 'オセル', mean: '継承・故郷', up: '家・伝統・受け継ぐものからの恵み。あなたの土台が力を貸してくれます。', rev: '古いやり方への固執に注意。伝統は柔軟に更新してこそ活きます。' },
+];
+const RUNE_SLOTS = ['現状', '課題', '結果・アドバイス'];
+
+document.getElementById('runeBtn').addEventListener('click', () => {
+  const el = document.getElementById('runeResult');
+  const deck = [...RUNES.keys()];
+  const drawn = [];
+  for (let i = 0; i < 3; i++) {
+    const idx = Math.floor(Math.random() * deck.length);
+    const rune = RUNES[deck.splice(idx, 1)[0]];
+    drawn.push({ rune, reversed: rune.rev !== null && Math.random() < 0.5 });
+  }
+  el.innerHTML = `
+    <div class="rune-spread">
+      ${drawn.map((d, i) => `
+      <div style="text-align:center;">
+        <div style="font-size:0.75rem; color:var(--text-dim); margin-bottom:6px;">${RUNE_SLOTS[i]}</div>
+        <div class="rune-stone" style="animation-delay:${i * 0.25}s;">
+          <span class="rune-glyph ${d.reversed ? 'reversed' : ''}">${d.rune.g}</span>
+          <span class="rune-name">${d.rune.name}</span>
+          <span class="rune-slot">${d.rune.rev === null ? '—' : (d.reversed ? '逆位置' : '正位置')}</span>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div class="tarot-reading">
+      ${drawn.map((d, i) => `
+      <div class="t-block">
+        <div class="t-head">【${RUNE_SLOTS[i]}】${d.rune.name}（${d.rune.mean}）${d.rune.rev === null ? '' : d.reversed ? '・逆位置' : '・正位置'}</div>
+        <div class="fortune-text" style="margin:0; font-size:0.88rem;">${d.reversed ? d.rune.rev : d.rune.up}</div>
+      </div>`).join('')}
+    </div>
+    <p class="note">※ 左右対称のルーン（ギューフ・ハガル・イサ・ヤラ・ユル・シゲル・イング・ダエグ）には伝統的に逆位置がありません。</p>
+  `;
+  el.classList.add('show');
+  document.getElementById('runeBtn').textContent = 'もう一度引く';
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+/* ==================== 易経（周易・擲銭法） ==================== */
+// 八卦：ビット値（下爻=1,中爻=2,上爻=4 の合計）→ 卦の情報
+const TRIGRAMS = {
+  7: { name: '乾', sym: '☰', nat: '天' }, 3: { name: '兌', sym: '☱', nat: '沢' },
+  5: { name: '離', sym: '☲', nat: '火' }, 1: { name: '震', sym: '☳', nat: '雷' },
+  6: { name: '巽', sym: '☴', nat: '風' }, 2: { name: '坎', sym: '☵', nat: '水' },
+  4: { name: '艮', sym: '☶', nat: '山' }, 0: { name: '坤', sym: '☷', nat: '地' },
+};
+// 周易（キング・ウェン）順の卦番号表：[上卦][下卦]（乾兌離震巽坎艮坤の順）
+const TRIGRAM_ORDER = { 7: 0, 3: 1, 5: 2, 1: 3, 6: 4, 2: 5, 4: 6, 0: 7 };
+const KINGWEN = [
+  [1, 10, 13, 25, 44, 6, 33, 12],
+  [43, 58, 49, 17, 28, 47, 31, 45],
+  [14, 38, 30, 21, 50, 64, 56, 35],
+  [34, 54, 55, 51, 32, 40, 62, 16],
+  [9, 61, 37, 42, 57, 59, 53, 20],
+  [5, 60, 63, 3, 48, 29, 39, 8],
+  [26, 41, 22, 27, 18, 4, 52, 23],
+  [11, 19, 36, 24, 46, 7, 15, 2],
+];
+const HEXAGRAMS = {
+  1: { name: '乾為天', yomi: 'けんいてん', text: '天を駆ける龍の勢い。強い創造力とリーダーシップで道を切り拓く大吉の卦です。ただし昇りつめた龍は驕りに注意。' },
+  2: { name: '坤為地', yomi: 'こんいち', text: '大地の徳の卦。受け入れ、支え、育てることで大成します。先頭に立つより、名補佐役として輝くときです。' },
+  3: { name: '水雷屯', yomi: 'すいらいちゅん', text: '産みの苦しみの卦。芽が固い土を押し上げている最中です。焦らず協力者を得れば、必ず突破できます。' },
+  4: { name: '山水蒙', yomi: 'さんすいもう', text: '霧の中の学びの卦。わからないことは素直に問いましょう。良い師や導き手に出会えば大きく伸びる時です。' },
+  5: { name: '水天需', yomi: 'すいてんじゅ', text: '待つことの卦。時期尚早、いまは英気を養いながら好機を待ちましょう。雨はやがて必ず上がります。' },
+  6: { name: '天水訟', yomi: 'てんすいしょう', text: '争いの卦。たとえ正しくても、争いは消耗を招きます。争う前に、信頼できる第三者への相談を。' },
+  7: { name: '地水師', yomi: 'ちすいし', text: '軍を率いる卦。規律と大義があれば人はついてきます。個人プレーよりも、組織戦・チーム戦で勝負の時。' },
+  8: { name: '水地比', yomi: 'すいちひ', text: '親しみ集う卦。人との結びつきが運を呼びます。輪に加わるなら早めに。遅れると席がなくなります。' },
+  9: { name: '風天小畜', yomi: 'ふうてんしょうちく', text: '小さく蓄える卦。大願成就にはまだ少し力が足りない時。小さな実りを丁寧に積み重ねましょう。' },
+  10: { name: '天沢履', yomi: 'てんたくり', text: '虎の尾を踏む卦。危うい場面ですが、礼儀と誠実さを守れば咎めなく通り抜けられます。慎重に、しかし怯まずに。' },
+  11: { name: '地天泰', yomi: 'ちてんたい', text: '天地が交わる大安泰の卦。上下の心が通い、万事順調に流れます。この平和を保つ努力だけは忘れずに。' },
+  12: { name: '天地否', yomi: 'てんちひ', text: '塞がりの卦。心が通わない停滞期です。無理にこじ開けず、内側を充実させて時の巡りを待ちましょう。' },
+  13: { name: '天火同人', yomi: 'てんかどうじん', text: '志を同じくする卦。公明正大な仲間づくりが成功を呼びます。私心を捨てるほど、人が集まってきます。' },
+  14: { name: '火天大有', yomi: 'かてんたいゆう', text: '大いなる所有の卦。太陽が天上から万物を照らす盛運です。実力と人望が大きな実りを結びます。' },
+  15: { name: '地山謙', yomi: 'ちざんけん', text: '謙虚の卦。実るほど頭を垂れる稲穂のように、謙遜そのものが幸運を引き寄せる、六十四卦で唯一全爻吉の卦です。' },
+  16: { name: '雷地予', yomi: 'らいちよ', text: '喜び楽しむ卦。準備が整い、音楽が鳴り始める時です。楽しみつつも、浮かれすぎには注意を。' },
+  17: { name: '沢雷随', yomi: 'たくらいずい', text: '従い随う卦。流れに素直に従うことが吉。信頼できる人や新しい時流についていくと道が開けます。' },
+  18: { name: '山風蠱', yomi: 'さんぷうこ', text: '腐敗を正す卦。放置してきた問題に手を入れる時です。壊れた箇所を直せば、運気は一気に一新します。' },
+  19: { name: '地沢臨', yomi: 'ちたくりん', text: '臨む卦。運気が満ちてくる上昇期です。積極的に人と関わり、巡ってきたチャンスに臨みましょう。' },
+  20: { name: '風地観', yomi: 'ふうちかん', text: '観る卦。動くより観察の時。物事の本質をじっくり見て学べば、打つべき次の一手が見えてきます。' },
+  21: { name: '火雷噬嗑', yomi: 'からいぜいごう', text: '噛み砕く卦。間に挟まった障害物を噛み砕いて進む時。妨げには毅然と対処すれば、道は通ります。' },
+  22: { name: '山火賁', yomi: 'さんかひ', text: '飾りの卦。美しく整えることが吉と出ています。ただし外見だけでなく、中身も一緒に磨くこと。' },
+  23: { name: '山地剥', yomi: 'さんちはく', text: '剥がれ落ちる卦。無理は禁物の衰運期です。守りに徹し、静かに次の芽吹きの時を待ちましょう。' },
+  24: { name: '地雷復', yomi: 'ちらいふく', text: '一陽来復の卦。長い冬が終わり、運気が戻り始めるおめでたい兆しです。焦らず自然の勢いに乗って。' },
+  25: { name: '天雷无妄', yomi: 'てんらいむぼう', text: '無心の卦。作為なく誠実に動けば吉。計算や下心を持って動くと、思わぬ災いを招きます。' },
+  26: { name: '山天大畜', yomi: 'さんてんたいちく', text: '大きく蓄える卦。実力を蓄えた者に、大きな役割が巡ってきます。学びへの投資が最大の吉です。' },
+  27: { name: '山雷頤', yomi: 'さんらいい', text: '養いの卦。口に入れるものと、口から出すものに気をつける時。食と言葉を整えると運も整います。' },
+  28: { name: '沢風大過', yomi: 'たくふうたいか', text: '重すぎる荷の卦。棟木がたわむほどの負担を抱えています。荷を下ろす勇気が、あなたと周りを救います。' },
+  29: { name: '坎為水', yomi: 'かんいすい', text: '重なる険難の卦。困難の中にいますが、水のように流れ続ければ必ず出口へ着きます。誠実さを失わないで。' },
+  30: { name: '離為火', yomi: 'りいか', text: '燃え上がる炎の卦。輝きと情熱の時です。ただし炎は薪あってこそ。支えてくれる存在への感謝を。' },
+  31: { name: '沢山咸', yomi: 'たくざんかん', text: '感じ合う卦。心が通じ合う時です。恋愛・縁談・提携に最良。理屈より素直な感応を大切に。' },
+  32: { name: '雷風恒', yomi: 'らいふうこう', text: '恒常の卦。変わらず続けることが最大の力になります。日々の習慣を守れば、運は安定して育ちます。' },
+  33: { name: '天山遯', yomi: 'てんざんとん', text: '退く卦。いまは身を引くが勝ちです。上手に距離を置くことで力を保ち、次の好機を待てます。' },
+  34: { name: '雷天大壮', yomi: 'らいてんたいそう', text: '大いに盛んな卦。力がみなぎる時ですが、勢い任せは怪我のもと。礼節を守った前進が実を結びます。' },
+  35: { name: '火地晋', yomi: 'かちしん', text: '日の出の卦。朝日が地平から昇るように前進する時です。実力が認められ、ステージが上がります。' },
+  36: { name: '地火明夷', yomi: 'ちかめいい', text: '光が地に沈む卦。才能を隠して耐える時です。いまは目立たないことが、あなたの身を守ります。' },
+  37: { name: '風火家人', yomi: 'ふうかかじん', text: '家族の卦。家庭や身内を整えることが万事の基本です。内が固まれば、外のことも自然と栄えます。' },
+  38: { name: '火沢睽', yomi: 'かたくけい', text: '背き合う卦。意見の食い違いが起きやすい時です。大同小異、小さな一致点から信頼を紡ぎ直して。' },
+  39: { name: '水山蹇', yomi: 'すいざんけん', text: '足踏みの卦。進めば険しい山、無理は禁物です。仲間と協力し、あえて回り道を選ぶのが賢明。' },
+  40: { name: '雷水解', yomi: 'らいすいかい', text: '解ける卦。長く続いた緊張や困難が解けていく時です。許すこと、緩めることが幸運を呼びます。' },
+  41: { name: '山沢損', yomi: 'さんたくそん', text: '損して得取る卦。いまの損失や奉仕は、将来の大きな利益になって返ってきます。惜しまず与えて。' },
+  42: { name: '風雷益', yomi: 'ふうらいえき', text: '益する卦。天が味方する増益の時です。良いと思ったことは即実行。人助けがそのまま自分の益に。' },
+  43: { name: '沢天夬', yomi: 'たくてんかい', text: '決断の卦。断ち切るべきものを断つ時です。ただし力ずくではなく、正々堂々と公にして進めること。' },
+  44: { name: '天風姤', yomi: 'てんぷうこう', text: '思わぬ出会いの卦。偶然の出会いに幸運も落とし穴も潜みます。魅力的な話ほど、よく吟味を。' },
+  45: { name: '沢地萃', yomi: 'たくちすい', text: '集まる卦。人・物・チャンスが集まってくる時です。集いの中心で誠実に振る舞えば大吉。' },
+  46: { name: '地風升', yomi: 'ちふうしょう', text: '昇る卦。地中の芽が着実に伸びていく上昇運です。一歩一歩の積み重ねが、そのまま昇進・成長に。' },
+  47: { name: '沢水困', yomi: 'たくすいこん', text: '困窮の卦。水の涸れた沢のように苦しい時ですが、君子は困してもなお明るさを失いません。言葉より行動で示して。' },
+  48: { name: '水風井', yomi: 'すいふうせい', text: '井戸の卦。誰にでも水を与える井戸のように、変わらぬ貢献が信頼を築きます。基本の手入れを怠らずに。' },
+  49: { name: '沢火革', yomi: 'たくかかく', text: '革命の卦。古いものを改める変革の時です。機が熟したら思い切って変えれば、人心はついてきます。' },
+  50: { name: '火風鼎', yomi: 'かふうてい', text: '鼎（かなえ）の卦。新しいものを煮出す安定の器です。三本足のような協力体制が、大事業を成します。' },
+  51: { name: '震為雷', yomi: 'しんいらい', text: '轟く雷の卦。驚く出来事がありそうですが、恐れて身を改めれば福に転じます。雷は鳴っても器は落とさずに。' },
+  52: { name: '艮為山', yomi: 'ごんいさん', text: '止まる山の卦。動かざること山の如し。いまは止まることが最善です。心を静めれば過ちはありません。' },
+  53: { name: '風山漸', yomi: 'ふうざんぜん', text: '漸進の卦。雁が列を成して飛ぶように、段階を踏んだ着実な前進が吉です。近道を探さないこと。' },
+  54: { name: '雷沢帰妹', yomi: 'らいたくきまい', text: '順序を欠く卦。手順や立場を飛ばすと破綻を招く時です。正式な段取りを踏み直しましょう。' },
+  55: { name: '雷火豊', yomi: 'らいかほう', text: '豊かさ極まる卦。盛運の絶頂です。ただし日は中天に昇れば傾くもの。今のうちに次への備えを。' },
+  56: { name: '火山旅', yomi: 'かざんりょ', text: '旅人の卦。慣れない場所での孤独な時期です。謙虚さと身軽さを保てば、旅先でも道は開けます。' },
+  57: { name: '巽為風', yomi: 'そんいふう', text: '従う風の卦。風のように柔らかく、繰り返し働きかければ固い扉も開きます。粘り強さが鍵です。' },
+  58: { name: '兌為沢', yomi: 'だいたく', text: '喜びの卦。楽しみと社交の運気です。笑顔と対話が幸運を連れてきます。ただし甘い誘惑は見極めて。' },
+  59: { name: '風水渙', yomi: 'ふうすいかん', text: '散らす卦。わだかまりや停滞が風に散らされていく時です。心のしこりを手放せば、新しい流れが生まれます。' },
+  60: { name: '水沢節', yomi: 'すいたくせつ', text: '節度の卦。竹の節のように、区切りとけじめが幸運の鍵です。ただし厳しすぎる節制は続きません。' },
+  61: { name: '風沢中孚', yomi: 'ふうたくちゅうふ', text: 'まごころの卦。誠実さが人の心を動かす時です。真心は水中の魚にまで届く——それほどの誠の力があります。' },
+  62: { name: '雷山小過', yomi: 'らいざんしょうか', text: '少し過ぎる卦。大きなことより小さなことを丁寧に。謙虚すぎるくらいで、ちょうど良い時です。' },
+  63: { name: '水火既済', yomi: 'すいかきせい', text: '完成の卦。物事が整い、完成した状態です。ただし完成は乱れの始まりでもあります。油断せず維持を。' },
+  64: { name: '火水未済', yomi: 'かすいびせい', text: '未完成の卦。あと一歩で完成しない状態ですが、だからこそ可能性は無限です。慎重に最後まで詰めれば渡り切れます。' },
+};
+// 爻の配列（下から上、値は 6=老陰・7=少陽・8=少陰・9=老陽）から卦番号を求める
+function hexagramNumber(lines, useChanged) {
+  const bit = v => {
+    const yang = (v === 7 || v === 9);
+    if (!useChanged) return yang ? 1 : 0;
+    if (v === 6) return 1; // 老陰は陽に変わる
+    if (v === 9) return 0; // 老陽は陰に変わる
+    return yang ? 1 : 0;
+  };
+  const lower = bit(lines[0]) + bit(lines[1]) * 2 + bit(lines[2]) * 4;
+  const upper = bit(lines[3]) + bit(lines[4]) * 2 + bit(lines[5]) * 4;
+  return { num: KINGWEN[TRIGRAM_ORDER[upper]][TRIGRAM_ORDER[lower]], upper, lower };
+}
+function hexFigure(lines) {
+  // 上爻から順に描画
+  return `<div class="hexagram">` + [...lines].reverse().map((v, i) => {
+    const yang = (v === 7 || v === 9);
+    const changing = (v === 6 || v === 9);
+    const bars = yang ? '<div class="hex-bar"></div>'
+      : '<div class="hex-bar"></div><div style="width:22%;"></div><div class="hex-bar"></div>';
+    return `<div class="hex-line ${changing ? 'changing' : ''}">${bars}${changing ? '<span class="hex-mark">変</span>' : ''}</div>`;
+  }).join('') + `</div>`;
+}
+
+document.getElementById('ichingBtn').addEventListener('click', () => {
+  const el = document.getElementById('ichingResult');
+  // 擲銭法：コイン3枚（表=3・裏=2）の合計を6回
+  const lines = [];
+  for (let i = 0; i < 6; i++) {
+    let sum = 0;
+    for (let c = 0; c < 3; c++) sum += Math.random() < 0.5 ? 3 : 2;
+    lines.push(sum);
+  }
+  const main = hexagramNumber(lines, false);
+  const h = HEXAGRAMS[main.num];
+  const changingCount = lines.filter(v => v === 6 || v === 9).length;
+  let changedHtml = '';
+  if (changingCount > 0) {
+    const chg = hexagramNumber(lines, true);
+    const h2 = HEXAGRAMS[chg.num];
+    changedHtml = `
+    <div class="t-block" style="background:rgba(246,211,101,0.08); border-radius:10px; padding:12px 14px; margin-top:10px;">
+      <div style="font-size:0.8rem; color:var(--gold); font-weight:bold; margin-bottom:4px;">🔄 之卦（変化の行方）：第${chg.num}卦 ${h2.name}（${h2.yomi}）</div>
+      <div style="font-size:0.88rem; line-height:1.7;">変爻が${changingCount}つ出ました。状況はやがて「${h2.name}」へ向かいます——${h2.text}</div>
+    </div>`;
+  } else {
+    changedHtml = `<p class="note" style="text-align:center;">変爻なし。本卦の意味がそのまま答えです。</p>`;
+  }
+  const upT = TRIGRAMS[main.upper], loT = TRIGRAMS[main.lower];
+  el.innerHTML = `
+    ${hexFigure(lines)}
+    <div class="hex-name">第${main.num}卦　${h.name}</div>
+    <div class="hex-yomi">${h.yomi}　（上卦：${upT.sym}${upT.name}＝${upT.nat} ／ 下卦：${loT.sym}${loT.name}＝${loT.nat}）</div>
+    <p class="fortune-text" style="margin-top:14px;">${h.text}</p>
+    ${changedHtml}
+    <p style="color:var(--text-dim); font-size:0.8rem; text-align:center; margin-top:10px;">同じ問いを何度も占うのは「瀆（けが）れ」とされます。答えは一度、心で受け止めて。</p>
+  `;
+  el.classList.add('show');
+  document.getElementById('ichingBtn').textContent = 'もう一度筮を立てる';
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+/* ==================== インド占星術（ナクシャトラ） ==================== */
+const NAKSHATRAS = [
+  { name: 'アシュヴィニー', sym: '馬の頭・治癒', text: 'スピードと治癒の星。行動が速く、新しいことを始める天性のパイオニアです。人を癒す手を持っています。' },
+  { name: 'バラニー', sym: '生命の器・忍耐', text: '強い意志と忍耐の星。生と死を司る深いエネルギーを持ち、一度決めたことは最後までやり抜きます。' },
+  { name: 'クリッティカー', sym: '剃刀・火', text: '鋭い批評眼と浄化の星。不要なものを焼き払う情熱で、真実を照らし出します。料理や火に縁がある人も。' },
+  { name: 'ローヒニー', sym: '牛車・成長', text: '豊かさと魅力の星。美と芸術のセンスに恵まれ、物事を着実に育てて実らせます。月が最も愛する星宿です。' },
+  { name: 'ムリガシラー', sym: '鹿の頭・探求', text: '探し求める星。好奇心旺盛で、知識や美しいものを求めて生涯旅を続ける探索者です。' },
+  { name: 'アールドラー', sym: '涙の雫・嵐', text: '嵐と再生の星。感受性が強く、破壊と再生のドラマを通じて誰よりも大きく成長します。' },
+  { name: 'プナルヴァス', sym: '矢筒・帰還', text: '再生と回復の星。何度でもやり直せる楽天性と寛容さを持つ、希望を運ぶ人です。' },
+  { name: 'プシュヤ', sym: '牛の乳・養育', text: '27宿で最も吉祥とされる星。人を養い育てる徳があり、信頼と繁栄を自然に引き寄せます。' },
+  { name: 'アーシュレーシャー', sym: '蛇・神秘', text: '蛇の知恵の星。鋭い洞察力とカリスマ性で、人の心の深層を見抜きます。神秘的な魅力の持ち主。' },
+  { name: 'マガー', sym: '王座・祖先', text: '王者の星。誇り高く、伝統や祖先から受け継いだ力で人の上に立つ器を持っています。' },
+  { name: 'プールヴァ・パールグニー', sym: '寝台・愛楽', text: '愛と創造の星。人生を楽しむ才能と芸術的な魅力で、自然と人々を惹きつけます。' },
+  { name: 'ウッタラ・パールグニー', sym: '寝台・契約', text: '約束と友情の星。面倒見がよく、結んだ縁を大切に育てる信頼の人です。' },
+  { name: 'ハスタ', sym: '手・器用', text: '手の星。器用さと機知に富み、手先の技術と実務能力で運をつかみます。ユーモアも達者。' },
+  { name: 'チットラー', sym: '真珠・輝き', text: '輝く宝石の星。デザインと構築の才能があり、美しいものを創り出す建築家的センスの持ち主。' },
+  { name: 'スヴァーティー', sym: '若芽・風', text: '風の星。独立心が強く、風のように自由でありながら、しなやかに逆境を乗り越えます。' },
+  { name: 'ヴィシャーカー', sym: '凱旋門・目標', text: '勝利の門の星。目標に向かう集中力は27宿随一。時間がかかっても必ず成し遂げます。' },
+  { name: 'アヌラーダー', sym: '蓮・友情', text: '友情と献身の星。異なる立場の人々をつなぎ、チームを成功へ導く調整の名手です。' },
+  { name: 'ジェーシュター', sym: '傘・長老', text: '長たる者の星。責任感と人を守る力があり、困難な状況でこそ頼られる存在です。' },
+  { name: 'ムーラ', sym: '根・根源', text: '根源の星。物事の根っこまで掘り下げる探究心で、真理に到達します。哲学や研究に向く人。' },
+  { name: 'プールヴァ・アーシャーダー', sym: '扇・不敗', text: '不敗の星。楽観と信念の力で、負けない戦いをします。人を鼓舞する弁も立ちます。' },
+  { name: 'ウッタラ・アーシャーダー', sym: '象の牙・最終勝利', text: '最終的勝利の星。正義感と持久力で、遅咲きでも最後には必ず勝つ人です。' },
+  { name: 'シュラヴァナ', sym: '耳・傾聴', text: '聴く星。学びと伝達の才能があり、人の話を聴く力がそのまま知恵と人望になります。' },
+  { name: 'ダニシュター', sym: '太鼓・富', text: '音楽と富の星。リズム感と気前の良さで、豊かさと名声を引き寄せます。' },
+  { name: 'シャタビシャー', sym: '百の薬草・癒し', text: '癒しと神秘の星。独自の世界観と探究心で、人と社会の傷を癒す医師のような役割を担います。' },
+  { name: 'プールヴァ・バードラパダー', sym: '剣・変容', text: '激しい理想の星。深い精神性と情熱で、世の中を変えるほどのエネルギーを秘めています。' },
+  { name: 'ウッタラ・バードラパダー', sym: '蛇・深海', text: '深い海の星。静かな包容力と知恵で、長期的な視野から人を支える賢者です。' },
+  { name: 'レーヴァティー', sym: '魚・道案内', text: '導きの星。優しさと保護の力があり、旅人を安全に目的地へ導く、27宿を締めくくる星です。' },
+];
+const RASHIS = ['メーシャ（牡羊座）', 'ヴリシャバ（牡牛座）', 'ミトゥナ（双子座）', 'カルカ（蟹座)', 'シンハ（獅子座）', 'カニヤー（乙女座）', 'トゥラー（天秤座）', 'ヴリシュチカ（蠍座）', 'ダヌ（射手座）', 'マカラ（山羊座）', 'クンバ（水瓶座）', 'ミーナ（魚座）'];
+
+// 月の黄経（トロピカル・略算、主要項のみ。誤差0.5度未満）
+function moonLongitude(jd) {
+  const T = (jd - 2451545.0) / 36525;
+  const rad = Math.PI / 180;
+  const norm = a => ((a % 360) + 360) % 360;
+  const Lp = 218.3164477 + 481267.88123421 * T;
+  const D = (297.8501921 + 445267.1114034 * T) * rad;
+  const M = (357.5291092 + 35999.0502909 * T) * rad;
+  const Mp = (134.9633964 + 477198.8675055 * T) * rad;
+  const F = (93.2720950 + 483202.0175233 * T) * rad;
+  const lon = Lp
+    + 6.288774 * Math.sin(Mp)
+    + 1.274027 * Math.sin(2 * D - Mp)
+    + 0.658314 * Math.sin(2 * D)
+    + 0.213618 * Math.sin(2 * Mp)
+    - 0.185116 * Math.sin(M)
+    - 0.114332 * Math.sin(2 * F)
+    + 0.058793 * Math.sin(2 * D - 2 * Mp)
+    + 0.057066 * Math.sin(2 * D - M - Mp)
+    + 0.053322 * Math.sin(2 * D + Mp)
+    + 0.045758 * Math.sin(2 * D - M);
+  return norm(lon);
+}
+// ラヒリ・アヤナーンシャ（略算）：2000年=23.853度、年に約50.3秒進む
+function ayanamsa(jd) {
+  return 23.853 + 0.0139699 * ((jd - 2451545.0) / 365.25);
+}
+
+document.getElementById('vedicBtn').addEventListener('click', () => {
+  const v = document.getElementById('vedicDate').value;
+  const el = document.getElementById('vedicResult');
+  if (!v) {
+    el.innerHTML = '<p style="color:#ff9a9e; text-align:center;">生年月日を入力してください</p>';
+    el.classList.add('show');
+    return;
+  }
+  const [y, m, d] = v.split('-').map(Number);
+  // 出生時刻不明のため正午（日本時間12:00 = UTC 03:00）で計算
+  const jd = jdn(y, m, d) - 0.5 + 3 / 24;
+  const sid = ((moonLongitude(jd) - ayanamsa(jd)) % 360 + 360) % 360;
+  const nakIdx = Math.floor(sid / (360 / 27));
+  const pada = Math.floor((sid % (360 / 27)) / (360 / 108)) + 1;
+  const rashi = Math.floor(sid / 30);
+  const nak = NAKSHATRAS[nakIdx];
+  el.innerHTML = `
+    <div class="vedic-main">
+      <div style="font-size:0.8rem; color:var(--text-dim); margin-bottom:4px;">あなたの月の星宿（ジャンマ・ナクシャトラ）</div>
+      <div class="v-name">${nak.name}</div>
+      <div style="color:var(--text-dim); font-size:0.85rem; margin-top:6px;">第${nakIdx + 1}宿 ／ 象徴：${nak.sym} ／ 第${pada}パダ</div>
+    </div>
+    <p class="fortune-text">${nak.text}</p>
+    <div class="lucky-grid" style="grid-template-columns:repeat(2,1fr);">
+      <div class="lucky-item" style="padding:14px 10px;">
+        <span class="label">月の星座（ラーシ・サイデリアル）</span>
+        <span class="value" style="font-size:0.85rem;">${RASHIS[rashi]}</span>
+      </div>
+      <div class="lucky-item" style="padding:14px 10px;">
+        <span class="label">月の位置（サイデリアル黄経）</span>
+        <span class="value" style="font-size:0.85rem;">${sid.toFixed(1)}°</span>
+      </div>
+    </div>
+    <p class="note">※ 月の位置は天文計算（略算・誤差0.5度未満）、ラヒリ・アヤナーンシャによるサイデリアル方式です。出生時刻が不明のため正午（日本時間）で計算しています。月は1日に約13度動くため、月の星宿の境目付近で生まれた方は、実際の出生時刻によって隣の宿になる場合があります。</p>
+  `;
+  el.classList.add('show');
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+
+/* ==================== ケルト樹木占い ==================== */
+const CELTIC_TREES = [
+  { name: 'モミ', emoji: '🌲', key: '気高さ', text: '神秘的な雰囲気と高い美意識を持ち、どんな環境でも凛と立つ強さがあります。少しの頑固さは、折れない芯の証です。' },
+  { name: 'ニレ', emoji: '🌳', key: '寛大', text: 'おおらかで面倒見がよく、頼られると断れない親分肌。公正さを愛し、周囲からの厚い信頼を集めます。' },
+  { name: 'イトスギ', emoji: '🌲', key: '忠実', text: '順応性が高く、少々の逆境ではへこたれない生命力の持ち主。いまあるものに満ち足りることを知る、幸せ上手です。' },
+  { name: 'ポプラ', emoji: '🌳', key: '繊細な美', text: '繊細な感受性と美的センスの持ち主。孤独に強く、選んだ相手にはどこまでも誠実に尽くします。' },
+  { name: 'ヒマラヤスギ', emoji: '🌲', key: '信頼', text: '堂々とした存在感と決断力を持ち、困難な場面でこそ頼りにされます。持ち前の楽観性が幸運を呼ぶ人です。' },
+  { name: 'マツ', emoji: '🌲', key: '几帳面', text: '緻密で働き者。愛する人のために巣を整える堅実さと、意外なロマンチストの一面を併せ持ちます。' },
+  { name: 'ヤナギ', emoji: '🌳', key: '直感', text: '月に愛された直感の人。芸術的な感性と深い共感力で、人の心の機微をすくい取ります。' },
+  { name: 'シナノキ', emoji: '🌳', key: '柔和', text: '穏やかで争いを好まず、居心地の良い空気を作る天才。そこにいるだけで安らぎを与える存在です。' },
+  { name: 'オーク', emoji: '🌳', key: '勇敢（春分の聖樹）', text: '春分の日に生まれた開拓者。揺るぎない意志と独立心で、自分の力で運命を切り拓いていきます。' },
+  { name: 'ハシバミ', emoji: '🌰', key: '非凡', text: '控えめながら強い印象を残す不思議な魅力の人。理解が早く、公正な判断力で一目置かれます。' },
+  { name: 'ナナカマド', emoji: '🍁', key: '繊細', text: '明るく親しみやすい魅力の裏に、深い思索を秘めています。人を楽しませることが自分の喜びになる人です。' },
+  { name: 'カエデ', emoji: '🍁', key: '独創', text: '人と違うことを恐れない自由な発想の人。新しいもの好きで、野心と好奇心が人生の原動力です。' },
+  { name: 'クルミ', emoji: '🌰', key: '情熱', text: '強烈な個性と戦略眼を持つ人。妥協を知らない集中力で、周囲が驚くような成果を上げます。' },
+  { name: 'クリ', emoji: '🌰', key: '正直', text: '曲がったことが嫌いな正義の人。外交辞令は苦手でも、その裏表のない誠実さが本物の信頼を生みます。' },
+  { name: 'トネリコ', emoji: '🌳', key: '向上心', text: '頭の回転が速く野心的。運命は自分で作るものと信じ、実際にそれを実現していく力があります。' },
+  { name: 'シデ', emoji: '🌳', key: '良識', text: '美と規律を愛し、約束を必ず守る人。冷静な判断力で、チームに秩序と安心をもたらします。' },
+  { name: 'イチジク', emoji: '🌿', key: '感受性', text: '家族と安定を愛する温かい人。ユーモアと楽しみを大切にし、身内にはどこまでも優しい存在です。' },
+  { name: 'カバノキ', emoji: '🌳', key: '創造（夏至の聖樹）', text: '夏至に生まれた光の人。控えめで気品があり、静かな魅力と豊かな想像力で人を惹きつけます。' },
+  { name: 'リンゴ', emoji: '🍎', key: '愛', text: '愛し愛されるために生まれたチャーミングな人。気前がよく、科学と空想の両方を楽しめる知性も持っています。' },
+  { name: 'オリーブ', emoji: '🫒', key: '知恵（秋分の聖樹）', text: '秋分の日に生まれたバランスの人。太陽と温もりを愛し、争いより理解を選ぶ生まれながらの賢者です。' },
+  { name: 'ブナ', emoji: '🌳', key: '創意（冬至の聖樹）', text: '冬至に生まれた実務家。物質的な成功に恵まれ、人生を計画的に、そして美しく整えていきます。' },
+];
+// [開始MMDD, 終了MMDD, 樹のインデックス]
+const CELTIC_RANGES = [
+  [1223, 1231, 18], [101, 101, 18],
+  [102, 111, 0], [112, 124, 1], [125, 203, 2], [204, 208, 3], [209, 218, 4],
+  [219, 229, 5], [301, 310, 6], [311, 320, 7], [321, 321, 8], [322, 331, 9],
+  [401, 410, 10], [411, 420, 11], [421, 430, 12], [501, 514, 3], [515, 524, 13],
+  [525, 603, 14], [604, 613, 15], [614, 623, 16], [624, 624, 17], [625, 704, 18],
+  [705, 714, 0], [715, 725, 1], [726, 804, 2], [805, 813, 3], [814, 823, 4],
+  [824, 902, 5], [903, 912, 6], [913, 922, 7], [923, 923, 19], [924, 1003, 9],
+  [1004, 1013, 10], [1014, 1023, 11], [1024, 1111, 12], [1112, 1121, 13],
+  [1122, 1201, 14], [1202, 1211, 15], [1212, 1221, 16], [1222, 1222, 20],
+];
+
+document.getElementById('celticBtn').addEventListener('click', () => {
+  const v = document.getElementById('celticDate').value;
+  const el = document.getElementById('celticResult');
+  if (!v) {
+    el.innerHTML = '<p style="color:#ff9a9e; text-align:center;">生年月日を入力してください</p>';
+    el.classList.add('show');
+    return;
+  }
+  const [y, m, d] = v.split('-').map(Number);
+  const mmdd = m * 100 + d;
+  const range = CELTIC_RANGES.find(r => mmdd >= r[0] && mmdd <= r[1]);
+  const tree = CELTIC_TREES[range[2]];
+  const isSacred = tree.key.includes('聖樹');
+  el.innerHTML = `
+    <div class="celtic-main">
+      <span class="c-emoji">${tree.emoji}</span>
+      <div class="c-name">${tree.name}</div>
+      <div style="color:var(--text-dim); font-size:0.85rem; margin-top:6px;">キーワード：${tree.key}</div>
+    </div>
+    <p class="fortune-text">${tree.text}</p>
+    ${isSacred ? '<p style="text-align:center; color:var(--gold); font-size:0.85rem;">✨ あなたは年に一日しかない特別な「聖樹の日」の生まれです ✨</p>' : ''}
+    <p class="note">※ ケルトの樹木暦（バウムクライス）に基づきます。守護樹は誕生日（月日）で決まり、生涯変わりません。</p>
+  `;
+  el.classList.add('show');
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+</script>
+</body>
+</html>
