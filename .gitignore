@@ -34,3 +34,20 @@ Obsidian Vault/
 samples/_data/
 remaining.txt
 summary.txt
+
+# 書籍（Kindle出版物・販売商品）。原稿は*.mdで除外済みだが、表紙PNG等の非md資産も
+# 含め、フォルダごと多層防御で除外。無料Web公開はKDPの独占規約違反になるため絶対NG。
+書籍/
+assets/book/
+
+# ショート動画制作（非公開・動画はSNSに直接投稿）
+ショート動画/
+
+# 販売用テンプレート（BOOTH等で販売する商品。公開リポジトリに置くと無料配布になるため絶対NG）
+templates_for_sale/
+
+# Webアプリ開発フォルダ（本番は別リポジトリ m-a-asan/seimei-kantei 等で公開。二重公開防止）
+webapps/
+
+# Obsidianキャンバス等の内部メモ
+*.canvas
