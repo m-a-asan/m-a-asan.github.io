@@ -3,3 +3,4 @@ Allow: /
 
 Sitemap: https://m-a-asan.github.io/sitemap.xml
 Sitemap: https://m-a-asan.github.io/seimei-kantei/sitemap.xml
+Sitemap: https://m-a-asan.github.io/korekara-lab/sitemap.xml
