@@ -51,3 +51,8 @@ webapps/
 
 # Obsidianキャンバス等の内部メモ
 *.canvas
+
+# AIエージェント用スキル（npx skills add で導入。外部由来・公開リポジトリに含めない）
+.agents/
+skills-lock.json
+node_modules/
