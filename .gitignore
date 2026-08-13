@@ -56,3 +56,6 @@ webapps/
 .agents/
 skills-lock.json
 node_modules/
+
+# ブランド素材（SNSヘッダー等の元データ。公開リポジトリに混ぜない）
+ブランド素材/
