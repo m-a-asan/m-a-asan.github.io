@@ -59,3 +59,8 @@ node_modules/
 
 # ブランド素材（SNSヘッダー等の元データ。公開リポジトリに混ぜない）
 ブランド素材/
+
+# 朝ダッシュボード（全事業の数値。売上・購読者数を含むためGitHub Pagesに絶対出さない）
+# ※ .gitignore は *.py を除外しているが *.html は除外していない（LP本体がhtmlのため）。
+#    このフォルダを除外し忘れると dashboard.html が m-a-asan.github.io で公開される。
+朝ダッシュボード/
