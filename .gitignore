@@ -64,3 +64,6 @@ node_modules/
 # ※ .gitignore は *.py を除外しているが *.html は除外していない（LP本体がhtmlのため）。
 #    このフォルダを除外し忘れると dashboard.html が m-a-asan.github.io で公開される。
 朝ダッシュボード/
+
+# 差し替えスクリプトのバックアップ（このフォルダ自体が公開リポジトリのため）
+index.html.bak_*
